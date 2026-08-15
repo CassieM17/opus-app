@@ -50,10 +50,22 @@ No install required — it's a single static file.
   funerals, corporate events, etc. — click to toggle, "+ More" reveals additional options),
   media, linked ensembles, and reviews. "Share profile" opens a share sheet (Text / Email /
   Copy Link — currently visual only, no real send).
+- **Settings** — reached via the gear icon on your Profile screen. Lists every profile tied
+  to your phone number (with a one-tap switcher), plus placeholder rows for payment,
+  notifications, privacy, and help.
+- **New Profile wizard** — "New Profile" in Settings (or the "+" avatar in the profile
+  switcher strip) launches a full-screen, 10-step onboarding flow: phone number → 6-digit
+  verification code → name & instrument → experience & location → genres → availability →
+  typical rate → bio → optional photo → review → confirmation. Finishing the flow generates
+  a brand-new profile object (with correct empty states for a musician who has no gigs,
+  reviews, ensembles, or media yet) and switches you into it. You can flip between profiles
+  anytime from the avatar strip at the top of Profile, or from Settings.
 
 Navigation keeps a lightweight history stack (`navHistory` in the `<script>` at the bottom
 of `index.html`), so back arrows always return to wherever you actually came from, even
-across ensemble → member → back chains.
+across ensemble → member → back chains. The Profile screen itself is now data-driven — it's
+rendered from a `profiles` array via `renderActiveProfile()`, so any profile (seeded or
+wizard-created) reuses the exact same layout and empty states.
 
 ## Where this could go next
 
@@ -61,6 +73,8 @@ Straight from the case study's own "if I continued developing Opus" list:
 
 - **Built-in payment processing** — Stripe Connect is the standard choice for marketplace
   apps with multiple payees (organizer pays, musicians get split payouts).
+- **Real phone verification** — the wizard's OTP step is currently a visual mock (any
+  6 digits pass); a real build would wire this to Twilio Verify or similar.
 - **Verified professional references** — a lightweight endorsement/verification flow between
   users who've actually worked together.
 - **Calendar sync** — read/write integration with Google Calendar and Apple Calendar (iCal)
