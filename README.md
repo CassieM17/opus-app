@@ -51,8 +51,9 @@ No install required — it's a single static file.
   media, linked ensembles, and reviews. "Share profile" opens a share sheet (Text / Email /
   Copy Link — currently visual only, no real send).
 - **Settings** — reached via the gear icon on your Profile screen. Lists every profile tied
-  to your phone number (with a one-tap switcher), plus placeholder rows for payment,
-  notifications, privacy, and help.
+  to your phone number (with a one-tap switcher and a delete icon on each row — deleting is
+  blocked with an explanatory alert if it's your only remaining profile), plus placeholder
+  rows for payment, notifications, privacy, and help.
 - **New Profile wizard** — "New Profile" in Settings (or the "+" avatar in the profile
   switcher strip) launches a full-screen, 10-step onboarding flow: phone number → 6-digit
   verification code → name & instrument → experience & location → genres → availability →
@@ -60,12 +61,41 @@ No install required — it's a single static file.
   a brand-new profile object (with correct empty states for a musician who has no gigs,
   reviews, ensembles, or media yet) and switches you into it. You can flip between profiles
   anytime from the avatar strip at the top of Profile, or from Settings.
+- **Edit Profile** — "Edit profile" on the Profile screen opens a form (prefilled with the
+  active profile's current data) covering name, instrument, experience, location, credential,
+  genres, availability, rate, bio, and photo. Saving re-renders the profile from the same
+  `profiles` data model the wizard writes to.
+- **Find Friends** — a "+ Find" button in the Network screen's header opens a search screen
+  where you can look someone up by name or phone number against a small mock directory.
+  Tapping "Add" on a result shows a native-style confirm/deny alert ("Add so-and-so to your
+  network?"); confirming adds them to your mutual connections on the spot.
+- **Mutual connections, expanded** — the "X total" label next to Mutual Connections on the
+  Network screen is clickable and takes you to a full scrolling list of everyone in your
+  network (seeded with the four ensemble co-members plus sixteen additional mock
+  connections, growing as you add people via Find Friends).
+- **Write a recommendation** — every connection row (in the Network screen's preview list,
+  the full connections list, and on each of the four ensemble members' own bio pages) has a
+  small pencil-icon button that opens a recommendation composer. Posting a recommendation for
+  Josh, Nathan, Elly, or Spencer appends it to a live Reviews section on their bio page,
+  replacing the empty "No reviews yet" state.
 
 Navigation keeps a lightweight history stack (`navHistory` in the `<script>` at the bottom
 of `index.html`), so back arrows always return to wherever you actually came from, even
 across ensemble → member → back chains. The Profile screen itself is now data-driven — it's
-rendered from a `profiles` array via `renderActiveProfile()`, so any profile (seeded or
-wizard-created) reuses the exact same layout and empty states.
+rendered from a `profiles` array via `renderActiveProfile()`, so any profile (seeded,
+wizard-created, or edited) reuses the exact same layout and empty states. Network data lives
+in a similar `CONNECTIONS` / `DIRECTORY` pair of arrays, and a generic `showAlert()` modal
+(styled like a native iOS alert) is reused for every confirm/deny and delete-confirmation
+moment in the app.
+
+## A note on `index.html` vs `opus-prototype.html`
+
+`index.html` is the standalone build meant for deploying on its own (e.g. GitHub Pages) —
+it's rendered at 80% scale (`transform:scale(0.8)` on `.phone`) so the phone frame doesn't
+dominate a full browser tab. `opus-prototype.html` is the same app at 100% scale, sized for
+embedding in an `<iframe>` inside the portfolio case study page. Keep both in sync when you
+make changes — the only intentional differences are the `<title>`, the studio label text,
+and that one `transform` rule.
 
 ## Where this could go next
 
