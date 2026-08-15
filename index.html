@@ -300,6 +300,158 @@
   .list-row .info b{ display:block; font-size:13.5px; color:var(--ink); font-family:'Inter',sans-serif; }
   .list-row .info span{ font-size:11.5px; color:var(--text-muted); }
   .list-row .chev{ color:var(--text-muted); }
+
+  /* ===== Settings gear + profile switcher ===== */
+  .settings-gear{
+    position:absolute; top:16px; right:18px; width:34px; height:34px; border-radius:50%;
+    background:rgba(247,243,234,.12); border:1px solid rgba(247,243,234,.22); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; color:var(--text-light);
+  }
+  .profile-switcher{
+    display:flex; gap:10px; padding:14px 20px 0; overflow-x:auto; background:var(--ink);
+  }
+  .switcher-item{
+    display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; flex-shrink:0; width:52px;
+  }
+  .switcher-item .sw-avatar{
+    width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:600; font-size:15px; color:#fff; border:2px solid transparent;
+  }
+  .switcher-item.active .sw-avatar{ border-color:var(--brass-light); }
+  .switcher-item span{ font-size:9px; color:#C7CCDA; font-family:'JetBrains Mono',monospace; text-align:center; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:52px; }
+  .switcher-item.add .sw-avatar{
+    background:transparent; border:1.5px dashed rgba(247,243,234,.4); color:rgba(247,243,234,.6); font-size:20px; font-weight:400;
+  }
+
+  /* ===== Settings screen ===== */
+  .settings-section-label{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--text-muted); margin:22px 0 8px;
+  }
+  .settings-section-label:first-child{ margin-top:4px; }
+  .profile-row{
+    display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--line);
+  }
+  .profile-row .sw-avatar{
+    width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px; color:#fff; flex-shrink:0;
+  }
+  .profile-row .info{ flex:1; cursor:pointer; }
+  .profile-row .info b{ display:block; font-size:13.5px; color:var(--ink); font-family:'Inter',sans-serif; }
+  .profile-row .info span{ font-size:11.5px; color:var(--text-muted); }
+  .active-pill{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; padding:4px 9px; border-radius:20px;
+    background:var(--sage); color:#fff; text-transform:uppercase; letter-spacing:.05em; flex-shrink:0;
+  }
+  .switch-pill{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; padding:4px 9px; border-radius:20px;
+    background:var(--parchment-2); color:var(--text-dark); border:1px solid var(--line); flex-shrink:0; cursor:pointer;
+  }
+  .add-profile-row{
+    display:flex; align-items:center; gap:12px; padding:13px; margin-top:2px; cursor:pointer;
+    border:1.5px dashed var(--brass); border-radius:14px; background:rgba(192,138,62,.06);
+  }
+  .add-profile-row .plus-circle{
+    width:38px; height:38px; border-radius:50%; background:var(--ink); color:var(--brass-light);
+    display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;
+  }
+  .add-profile-row b{ display:block; font-size:13px; color:var(--ink); font-family:'Inter',sans-serif; }
+  .add-profile-row span{ font-size:11px; color:var(--text-muted); }
+  .settings-row{
+    display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line); cursor:pointer;
+  }
+  .settings-row .label{ font-size:13.5px; color:var(--ink); font-family:'Inter',sans-serif; font-weight:500; }
+  .settings-row .val{ font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px; }
+  .verified-check{ color:var(--sage); display:flex; align-items:center; gap:3px; font-family:'JetBrains Mono',monospace; font-size:10px; }
+  .logout-row{ color:var(--crimson); font-weight:600; font-size:13.5px; padding:16px 0; text-align:center; cursor:pointer; font-family:'Inter',sans-serif; }
+
+  /* ===== Wizard (New Profile flow) ===== */
+  .wiz-progress-track{ height:4px; border-radius:3px; background:rgba(247,243,234,.16); margin-top:10px; overflow:hidden; }
+  .wiz-progress-fill{ height:100%; background:var(--brass-light); border-radius:3px; width:0%; transition:width .25s ease; }
+  .wiz-step-count{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#C7CCDA; margin-top:8px; }
+
+  .wiz-content{ display:flex; flex-direction:column; padding-bottom:110px; }
+  .wiz-step{ display:none; flex-direction:column; }
+  .wiz-step.active{ display:flex; }
+
+  .wiz-icon-badge{
+    width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg, var(--brass), var(--crimson));
+    display:flex; align-items:center; justify-content:center; color:#fff; margin-bottom:16px;
+  }
+  .wiz-title{ font-family:'Fraunces',serif; font-size:22px; font-weight:600; color:var(--ink); margin-bottom:8px; line-height:1.2; }
+  .wiz-sub{ font-size:13.5px; color:var(--text-muted); line-height:1.55; margin-bottom:22px; }
+
+  .field-label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin:16px 0 7px; }
+  .field-label:first-of-type{ margin-top:0; }
+  .field-input, .field-select, .field-textarea{
+    width:100%; font-family:'Inter',sans-serif; font-size:14.5px; color:var(--text-dark);
+    background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:13px 14px;
+  }
+  .field-input:focus, .field-select:focus, .field-textarea:focus{ outline:none; border-color:var(--brass); }
+  .field-textarea{ resize:none; font-family:'Inter',sans-serif; line-height:1.5; min-height:96px; }
+  .field-row{ display:flex; gap:10px; }
+  .field-row .field-input{ flex:1; }
+  .field-hint{ font-size:11px; color:var(--text-muted); margin-top:6px; }
+  .char-count{ font-size:10.5px; color:var(--text-muted); text-align:right; margin-top:4px; font-family:'JetBrains Mono',monospace; }
+
+  .phone-input-row{ display:flex; gap:8px; align-items:center; }
+  .country-code{
+    font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--text-dark); background:#fff;
+    border:1.5px solid var(--line); border-radius:12px; padding:13px 12px; flex-shrink:0;
+  }
+
+  .otp-row{ display:flex; gap:8px; margin:6px 0 4px; }
+  .otp-box{
+    width:100%; aspect-ratio:1/1; text-align:center; font-family:'JetBrains Mono',monospace; font-size:20px;
+    border:1.5px solid var(--line); border-radius:12px; background:#fff; color:var(--ink);
+  }
+  .otp-box:focus{ outline:none; border-color:var(--brass); }
+  .resend-link{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--brass); margin-top:14px; cursor:pointer; display:inline-block; }
+
+  .chip-select{ display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
+  .chip-pick{
+    font-family:'JetBrains Mono',monospace; font-size:12px; padding:9px 14px; border-radius:20px;
+    border:1.5px solid var(--line); background:#fff; color:var(--text-dark); cursor:pointer;
+  }
+  .chip-pick.on{ background:var(--ink); color:var(--brass-light); border-color:var(--ink); }
+
+  .instrument-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px; }
+  .instrument-opt{
+    display:flex; align-items:center; gap:10px; padding:12px; border-radius:12px; border:1.5px solid var(--line);
+    background:#fff; cursor:pointer; font-size:13px; color:var(--text-dark); font-family:'Inter',sans-serif;
+  }
+  .instrument-opt.on{ border-color:var(--ink); background:var(--parchment-2); font-weight:600; color:var(--ink); }
+
+  .wiz-footer{
+    position:absolute; bottom:0; left:0; right:0; padding:14px 20px 26px; background:rgba(247,243,234,.94);
+    backdrop-filter:blur(8px); border-top:1px solid var(--line);
+  }
+  .wiz-footer .btn{ opacity:1; }
+  .wiz-footer .btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .wiz-skip{ text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-muted); margin-top:10px; cursor:pointer; }
+
+  .photo-preview{
+    width:104px; height:104px; border-radius:26px; margin:6px auto 18px; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-size:36px; font-weight:600; color:#fff; overflow:hidden;
+    background:linear-gradient(135deg, var(--brass), var(--crimson));
+  }
+  .photo-preview img{ width:100%; height:100%; object-fit:cover; }
+  .photo-upload-btn{ display:block; text-align:center; }
+
+  .review-card{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px; }
+  .review-card .rl{ font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); }
+  .review-card .rv{ font-size:13.5px; color:var(--ink); margin-top:3px; font-family:'Inter',sans-serif; }
+
+  .wiz-success{ align-items:center; text-align:center; padding-top:40px; }
+  .success-check{
+    width:78px; height:78px; border-radius:50%; background:var(--sage); color:#fff;
+    display:flex; align-items:center; justify-content:center; margin-bottom:20px;
+  }
+
+  .empty-note{
+    font-size:12.5px; color:var(--text-muted); line-height:1.55; background:var(--parchment-2);
+    border-radius:12px; padding:14px; font-family:'Inter',sans-serif;
+  }
 </style>
 </head>
 <body>
@@ -617,75 +769,219 @@
           <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
         </div>
       </div>
+      <div id="profileSwitcher" class="profile-switcher" style="display:none; padding-bottom:14px;"></div>
     </div>
     <div class="profile-hero" style="margin-top:-1px;">
-      <div class="profile-photo">CM</div>
-      <div class="profile-name">Cassandra May</div>
-      <div class="profile-tagline">Violin &middot; Pittsburgh, PA &middot; 18 yrs experience</div>
-      <div class="badge-row">
-        <div class="badge" onclick="showScreen('screen-ensemble-mezza')" style="cursor:pointer;">Mezza Quartet</div>
-        <div class="badge" onclick="showScreen('screen-ensemble-grieg')" style="cursor:pointer;">Grieg Duo</div>
-        <div class="badge">Carnegie Mellon BFA</div>
+      <button class="settings-gear" onclick="openSettings()" aria-label="Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <div class="profile-photo" id="profilePhoto">CM</div>
+      <div class="profile-name" id="profileName">Cassandra May</div>
+      <div class="profile-tagline" id="profileTagline">Violin &middot; Pittsburgh, PA &middot; 18 yrs experience</div>
+      <div class="badge-row" id="profileBadges"></div>
+    </div>
+    <div class="content" style="padding-top:0;" id="profileContent"></div>
+  </div>
+
+  <!-- ===================== SCREEN: SETTINGS ===================== -->
+  <div class="screen" id="screen-settings">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="back-row" onclick="showScreen('screen-profile')">&larr; profile</div>
+        <div class="brand" style="margin-top:10px; font-size:19px;">Settings</div>
       </div>
     </div>
-    <div class="content" style="padding-top:0;">
-      <div class="stat-strip">
-        <div class="stat"><b>140</b><span>Gigs played</span></div>
-        <div class="stat"><b>5.0</b><span>Rating</span></div>
-        <div class="stat"><b>$250–450</b><span>Typical rate</span></div>
+    <div class="content">
+      <div class="settings-section-label">Your Profiles</div>
+      <div id="settingsProfileList"></div>
+      <div class="add-profile-row" onclick="enterWizard()">
+        <div class="plus-circle">+</div>
+        <div>
+          <b>New Profile</b>
+          <span>Create another profile linked to this phone number</span>
+        </div>
       </div>
 
-      <div class="section-title">Biography</div>
-      <p class="bio">Freelance violinist with 18 years of performance experience across chamber, orchestral, and private-event settings. BFA in Violin Performance from Carnegie Mellon University. Founding member of the Mezza Quartet, and one half of the Grieg Duo alongside pianist Spencer Cha. Comfortable with formal ceremonies, recital programs, and sight-reading on short notice.</p>
-
-      <div class="section-title">Genres</div>
-      <div class="tagrow"><div class="tag">Classical</div><div class="tag">Jazz</div><div class="tag">Pop</div></div>
-
-      <div class="section-title">Available For</div>
-      <div class="tagrow">
-        <div class="tag avail on" onclick="this.classList.toggle('on')">Weddings</div>
-        <div class="tag avail on" onclick="this.classList.toggle('on')">Corporate Events</div>
-        <div class="tag avail" onclick="this.classList.toggle('on')">Funerals</div>
-        <div class="tag avail" onclick="this.classList.toggle('on')">Recitals</div>
-        <div class="tag avail hidden" onclick="this.classList.toggle('on')">Religious Services</div>
-        <div class="tag avail hidden" onclick="this.classList.toggle('on')">Session Work</div>
-        <div class="tag avail hidden" onclick="this.classList.toggle('on')">Teaching</div>
-        <div class="tag avail more" onclick="revealMore(this)">+ More</div>
+      <div class="settings-section-label">Account</div>
+      <div class="settings-row">
+        <span class="label">Phone number</span>
+        <span class="val" id="settingsPhoneVal">&middot;&middot;&middot;&middot;&middot;&middot;</span>
+      </div>
+      <div class="settings-row">
+        <span class="label">Payment &amp; payouts</span>
+        <span class="val">&rsaquo;</span>
+      </div>
+      <div class="settings-row">
+        <span class="label">Notifications</span>
+        <span class="val">&rsaquo;</span>
+      </div>
+      <div class="settings-row">
+        <span class="label">Privacy &amp; trust</span>
+        <span class="val">&rsaquo;</span>
+      </div>
+      <div class="settings-row" style="border-bottom:none;">
+        <span class="label">Help &amp; support</span>
+        <span class="val">&rsaquo;</span>
       </div>
 
-      <div class="section-title">Media</div>
-      <div class="media-strip">
-        <div class="media-thumb">▶ Grieg Sonata No. 3, live</div>
-        <div class="media-thumb">▶ Mezza Quartet reel</div>
-        <div class="media-thumb">▶ Solo recital, CMU</div>
+      <div class="logout-row">Log Out</div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: NEW PROFILE WIZARD ===================== -->
+  <div class="screen" id="screen-newprofile">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="back-row" id="wizBackRow" onclick="wizardBack()">&larr; cancel</div>
+        <div class="wiz-progress-track" id="wizProgressTrack">
+          <div class="wiz-progress-fill" id="wizProgressFill"></div>
+        </div>
+        <div class="wiz-step-count" id="wizStepCount"></div>
+      </div>
+    </div>
+
+    <div class="content wiz-content">
+
+      <!-- step 0: intro -->
+      <div class="wiz-step" data-step="0">
+        <div class="wiz-icon-badge">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/><path d="M18 4v4M16 6h4" stroke="var(--brass-light)"/></svg>
+        </div>
+        <div class="wiz-title">Create a new profile</div>
+        <div class="wiz-sub">Set up another musician or ensemble identity under your account. It only takes a couple minutes, and it's linked to your phone number to keep every profile on Opus verified.</div>
+        <div class="empty-note">You'll be asked to verify your phone number, then add your instrument, experience, genres, availability, rate, a short bio, and an optional photo.</div>
       </div>
 
-      <div class="section-title" style="margin-top:16px;">Ensembles</div>
-      <div class="list-row" onclick="showScreen('screen-ensemble-mezza')">
-        <div class="avatar" style="background:var(--brass); margin-left:0; width:38px; height:38px; font-size:12px;">MQ</div>
-        <div class="info"><b>Mezza Quartet</b><span>String Quartet &middot; 4 members</span></div>
-        <div class="chev">&rsaquo;</div>
-      </div>
-      <div class="list-row" onclick="showScreen('screen-ensemble-grieg')">
-        <div class="avatar" style="background:var(--sage); margin-left:0; width:38px; height:38px; font-size:12px;">GD</div>
-        <div class="info"><b>Grieg Duo</b><span>Violin / Piano Duo &middot; 2 members</span></div>
-        <div class="chev">&rsaquo;</div>
-      </div>
-
-      <div class="section-title">Reviews</div>
-      <div class="review">
-        <p>"Punctual, beautifully prepared, and easy to coordinate with day-of."</p>
-        <div class="who">— Elena Petrova, Wedding Planner</div>
-      </div>
-      <div class="review">
-        <p>"Eighteen years of stage experience and it shows — poised, precise, and generous with the rest of the ensemble."</p>
-        <div class="who">— Prof. Miriam Osei, Carnegie Mellon School of Music</div>
+      <!-- step 1: phone -->
+      <div class="wiz-step" data-step="1">
+        <div class="wiz-title">What's your number?</div>
+        <div class="wiz-sub">We'll text a 6-digit code to verify it's really you. Your number is never shown to organizers.</div>
+        <div class="field-label">Phone number</div>
+        <div class="phone-input-row">
+          <div class="country-code">+1</div>
+          <input class="field-input" type="tel" id="wizPhone" placeholder="(555) 555-0123" oninput="wizardValidate()">
+        </div>
       </div>
 
-      <div class="btn-row" style="margin-top:8px;">
-        <button class="btn">Edit profile</button>
-        <button class="btn ghost" onclick="openSheet()">Share profile</button>
+      <!-- step 2: verify -->
+      <div class="wiz-step" data-step="2">
+        <div class="wiz-title">Enter your code</div>
+        <div class="wiz-sub">We sent a 6-digit code to <span id="wizPhoneDisplay">your number</span>.</div>
+        <div class="otp-row">
+          <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpAdvance(this)">
+          <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpAdvance(this)">
+          <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpAdvance(this)">
+          <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpAdvance(this)">
+          <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpAdvance(this)">
+          <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpAdvance(this)">
+        </div>
+        <span class="resend-link" onclick="return false;">Didn't get it? Resend code</span>
       </div>
+
+      <!-- step 3: name + instrument -->
+      <div class="wiz-step" data-step="3">
+        <div class="wiz-title">The basics</div>
+        <div class="wiz-sub">This is how organizers will see this profile.</div>
+        <div class="field-label">Full name or profile name</div>
+        <input class="field-input" type="text" id="wizName" placeholder="e.g. Cassandra May" oninput="wizardValidate()">
+        <div class="field-label">Primary instrument</div>
+        <div class="instrument-grid" id="wizInstrumentGrid"></div>
+      </div>
+
+      <!-- step 4: experience + location -->
+      <div class="wiz-step" data-step="4">
+        <div class="wiz-title">Experience &amp; location</div>
+        <div class="wiz-sub">Helps organizers gauge fit at a glance.</div>
+        <div class="field-label">Years of experience</div>
+        <input class="field-input" type="number" min="0" max="60" id="wizYears" placeholder="e.g. 8" oninput="wizardValidate()">
+        <div class="field-label">City &amp; state</div>
+        <input class="field-input" type="text" id="wizLocation" placeholder="e.g. Pittsburgh, PA" oninput="wizardValidate()">
+      </div>
+
+      <!-- step 5: genres -->
+      <div class="wiz-step" data-step="5">
+        <div class="wiz-title">Genres</div>
+        <div class="wiz-sub">Pick everything that applies — you can change this later.</div>
+        <div class="chip-select" id="wizGenreGrid"></div>
+      </div>
+
+      <!-- step 6: available for -->
+      <div class="wiz-step" data-step="6">
+        <div class="wiz-title">Available for</div>
+        <div class="wiz-sub">What kinds of gigs do you want to be matched with?</div>
+        <div class="chip-select" id="wizAvailGrid"></div>
+      </div>
+
+      <!-- step 7: rate -->
+      <div class="wiz-step" data-step="7">
+        <div class="wiz-title">Typical rate</div>
+        <div class="wiz-sub">A range is fine — you can quote exact rates per gig later.</div>
+        <div class="field-row">
+          <div style="flex:1;">
+            <div class="field-label">Min ($)</div>
+            <input class="field-input" type="number" min="0" id="wizRateMin" placeholder="200">
+          </div>
+          <div style="flex:1;">
+            <div class="field-label">Max ($)</div>
+            <input class="field-input" type="number" min="0" id="wizRateMax" placeholder="450">
+          </div>
+        </div>
+        <div class="field-hint">Shown as your typical rate on your profile.</div>
+      </div>
+
+      <!-- step 8: bio -->
+      <div class="wiz-step" data-step="8">
+        <div class="wiz-title">Short bio</div>
+        <div class="wiz-sub">A couple sentences about your background and what you play.</div>
+        <textarea class="field-textarea" id="wizBio" maxlength="280" placeholder="e.g. Freelance cellist based in Pittsburgh, focused on chamber and wedding repertoire..." oninput="wizardBioCount()"></textarea>
+        <div class="char-count"><span id="wizBioCount">0</span>/280</div>
+      </div>
+
+      <!-- step 9: photo -->
+      <div class="wiz-step" data-step="9">
+        <div class="wiz-title">Add a photo</div>
+        <div class="wiz-sub">Profiles with a photo get more responses from organizers. Optional for now.</div>
+        <div class="photo-preview" id="wizPhotoPreview">?</div>
+        <label class="btn ghost block photo-upload-btn" style="cursor:pointer;">
+          Choose a photo
+          <input type="file" accept="image/*" id="wizPhotoInput" style="display:none;" onchange="wizardPhotoChosen(event)">
+        </label>
+      </div>
+
+      <!-- step 10: review -->
+      <div class="wiz-step" data-step="10">
+        <div class="wiz-title">Review &amp; create</div>
+        <div class="wiz-sub">Here's what organizers will see. You can edit anything later from your profile.</div>
+        <div id="wizReview"></div>
+      </div>
+
+      <!-- step 11: success -->
+      <div class="wiz-step wiz-success" data-step="11">
+        <div class="success-check">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="wiz-title">Profile created</div>
+        <div class="wiz-sub">Your new profile is live and linked to your phone number. Switch between profiles anytime from Settings.</div>
+      </div>
+
+    </div>
+
+    <div class="wiz-footer">
+      <button class="btn block" id="wizContinueBtn" onclick="wizardNext()">Get started</button>
     </div>
   </div>
 
@@ -1093,6 +1389,425 @@
   function closeSheet(e){
     document.getElementById('shareSheet').classList.remove('open');
   }
+
+  /* =====================================================================
+     PROFILES — data model + rendering
+     Profile screen content is generated from this array so a brand-new
+     profile created through the "New Profile" wizard renders with the
+     same layout/empty-states as the seeded Cassandra May profile.
+  ===================================================================== */
+  var accountPhone = '(412) 555-0182';
+
+  var profiles = [
+    {
+      initials: 'CM',
+      photoColor: 'linear-gradient(135deg, var(--brass), var(--crimson))',
+      photoUrl: null,
+      name: 'Cassandra May',
+      tagline: 'Violin &middot; Pittsburgh, PA &middot; 18 yrs experience',
+      badges: [
+        { label:'Mezza Quartet', onclick:"showScreen('screen-ensemble-mezza')" },
+        { label:'Grieg Duo', onclick:"showScreen('screen-ensemble-grieg')" },
+        { label:'Carnegie Mellon BFA' }
+      ],
+      stats: [
+        { value:'140', label:'Gigs played' },
+        { value:'5.0', label:'Rating' },
+        { value:'$250–450', label:'Typical rate' }
+      ],
+      bio: 'Freelance violinist with 18 years of performance experience across chamber, orchestral, and private-event settings. BFA in Violin Performance from Carnegie Mellon University. Founding member of the Mezza Quartet, and one half of the Grieg Duo alongside pianist Spencer Cha. Comfortable with formal ceremonies, recital programs, and sight-reading on short notice.',
+      genres: ['Classical', 'Jazz', 'Pop'],
+      availableOn: ['Weddings', 'Corporate Events'],
+      availableOff: ['Funerals', 'Recitals'],
+      availableHidden: ['Religious Services', 'Session Work', 'Teaching'],
+      media: ['▶ Grieg Sonata No. 3, live', '▶ Mezza Quartet reel', '▶ Solo recital, CMU'],
+      ensembles: [
+        { initials:'MQ', color:'var(--brass)', name:'Mezza Quartet', sub:'String Quartet &middot; 4 members', onclick:"showScreen('screen-ensemble-mezza')" },
+        { initials:'GD', color:'var(--sage)', name:'Grieg Duo', sub:'Violin / Piano Duo &middot; 2 members', onclick:"showScreen('screen-ensemble-grieg')" }
+      ],
+      reviews: [
+        { text:'"Punctual, beautifully prepared, and easy to coordinate with day-of."', who:'— Elena Petrova, Wedding Planner' },
+        { text:'"Eighteen years of stage experience and it shows — poised, precise, and generous with the rest of the ensemble."', who:'— Prof. Miriam Osei, Carnegie Mellon School of Music' }
+      ],
+      isNew: false,
+      phone: accountPhone
+    }
+  ];
+  var currentProfileIndex = 0;
+
+  function escapeHtml(s){
+    var div = document.createElement('div');
+    div.textContent = s == null ? '' : String(s);
+    return div.innerHTML;
+  }
+
+  function switchProfile(i){
+    currentProfileIndex = i;
+    renderActiveProfile();
+    showScreen('screen-profile');
+  }
+
+  function renderSwitcher(){
+    var el = document.getElementById('profileSwitcher');
+    if(profiles.length <= 1){ el.style.display = 'none'; el.innerHTML = ''; return; }
+    el.style.display = 'flex';
+    var html = profiles.map(function(p, i){
+      var photoHtml = p.photoUrl ? '<img src="'+p.photoUrl+'">' : p.initials;
+      return '<div class="switcher-item'+(i===currentProfileIndex?' active':'')+'" onclick="switchProfile('+i+')">'
+        + '<div class="sw-avatar" style="background:'+(p.photoUrl?'transparent':p.photoColor)+'; overflow:hidden;">'+photoHtml+'</div>'
+        + '<span>'+escapeHtml(p.name.split(' ')[0])+'</span></div>';
+    }).join('');
+    html += '<div class="switcher-item add" onclick="enterWizard()"><div class="sw-avatar">+</div><span>New</span></div>';
+    el.innerHTML = html;
+  }
+
+  function renderActiveProfile(){
+    var p = profiles[currentProfileIndex];
+
+    var photoEl = document.getElementById('profilePhoto');
+    if(p.photoUrl){
+      photoEl.style.background = 'transparent';
+      photoEl.innerHTML = '<img src="'+p.photoUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:20px;">';
+    } else {
+      photoEl.style.background = p.photoColor;
+      photoEl.innerHTML = '';
+      photoEl.textContent = p.initials;
+    }
+
+    document.getElementById('profileName').textContent = p.name;
+    document.getElementById('profileTagline').innerHTML = p.tagline;
+    document.getElementById('profileBadges').innerHTML = p.badges.map(function(b){
+      return '<div class="badge"'+(b.onclick ? ' onclick="'+b.onclick+'" style="cursor:pointer;"' : '')+'>'+escapeHtml(b.label)+'</div>';
+    }).join('');
+
+    var statsHtml = '<div class="stat-strip">' + p.stats.map(function(s){
+      return '<div class="stat"><b>'+escapeHtml(s.value)+'</b><span>'+escapeHtml(s.label)+'</span></div>';
+    }).join('') + '</div>';
+
+    var bioHtml = '<div class="section-title">Biography</div><p class="bio">'+escapeHtml(p.bio)+'</p>';
+
+    var genresHtml = '<div class="section-title">Genres</div><div class="tagrow">'
+      + (p.genres.length
+          ? p.genres.map(function(g){ return '<div class="tag">'+escapeHtml(g)+'</div>'; }).join('')
+          : '<div class="empty-note">No genres added yet.</div>')
+      + '</div>';
+
+    var availChips = p.availableOn.map(function(a){ return '<div class="tag avail on" onclick="this.classList.toggle(\'on\')">'+escapeHtml(a)+'</div>'; }).join('')
+      + p.availableOff.map(function(a){ return '<div class="tag avail" onclick="this.classList.toggle(\'on\')">'+escapeHtml(a)+'</div>'; }).join('')
+      + p.availableHidden.map(function(a){ return '<div class="tag avail hidden" onclick="this.classList.toggle(\'on\')">'+escapeHtml(a)+'</div>'; }).join('')
+      + (p.availableHidden.length ? '<div class="tag avail more" onclick="revealMore(this)">+ More</div>' : '');
+    var availHtml = '<div class="section-title">Available For</div><div class="tagrow">'+availChips+'</div>';
+
+    var mediaHtml;
+    if(p.media.length){
+      mediaHtml = '<div class="section-title">Media</div><div class="media-strip">' + p.media.map(function(m){ return '<div class="media-thumb">'+escapeHtml(m)+'</div>'; }).join('') + '</div>';
+    } else {
+      mediaHtml = '<div class="section-title">Media</div><div class="empty-note">No media yet — add a recording or reel to help organizers hear you play.</div>';
+    }
+
+    var ensemblesHtml;
+    if(p.ensembles.length){
+      ensemblesHtml = '<div class="section-title" style="margin-top:16px;">Ensembles</div>' + p.ensembles.map(function(e){
+        return '<div class="list-row" onclick="'+e.onclick+'"><div class="avatar" style="background:'+e.color+'; margin-left:0; width:38px; height:38px; font-size:12px;">'+e.initials+'</div><div class="info"><b>'+escapeHtml(e.name)+'</b><span>'+e.sub+'</span></div><div class="chev">&rsaquo;</div></div>';
+      }).join('');
+    } else {
+      ensemblesHtml = '<div class="section-title" style="margin-top:16px;">Ensembles</div><div class="empty-note">You haven\'t joined or created an ensemble on this profile yet.</div>';
+    }
+
+    var reviewsHtml;
+    if(p.reviews.length){
+      reviewsHtml = '<div class="section-title">Reviews</div>' + p.reviews.map(function(r){
+        return '<div class="review"><p>'+r.text+'</p><div class="who">'+r.who+'</div></div>';
+      }).join('');
+    } else {
+      reviewsHtml = '<div class="section-title">Reviews</div><div class="empty-note">No reviews yet — they\'ll appear here after your first completed gig on Opus.</div>';
+    }
+
+    var buttonsHtml = '<div class="btn-row" style="margin-top:8px;"><button class="btn">Edit profile</button><button class="btn ghost" onclick="openSheet()">Share profile</button></div>';
+
+    document.getElementById('profileContent').innerHTML = statsHtml + bioHtml + genresHtml + availHtml + mediaHtml + ensemblesHtml + reviewsHtml + buttonsHtml;
+
+    renderSwitcher();
+  }
+
+  /* =====================================================================
+     SETTINGS
+  ===================================================================== */
+  function openSettings(){
+    renderSettingsProfiles();
+    document.getElementById('settingsPhoneVal').innerHTML =
+      '<span class="verified-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Verified</span> ' + accountPhone;
+    showScreen('screen-settings');
+  }
+
+  function renderSettingsProfiles(){
+    var wrap = document.getElementById('settingsProfileList');
+    wrap.innerHTML = profiles.map(function(p, i){
+      var pillHtml = i === currentProfileIndex
+        ? '<span class="active-pill">Active</span>'
+        : '<span class="switch-pill" onclick="switchProfile('+i+')">Switch</span>';
+      var photoHtml = p.photoUrl ? '<img src="'+p.photoUrl+'">' : p.initials;
+      var shortTagline = p.tagline.split('&middot;')[0].trim();
+      return '<div class="profile-row">'
+        + '<div class="sw-avatar" style="background:'+(p.photoUrl?'transparent':p.photoColor)+'; overflow:hidden;">'+photoHtml+'</div>'
+        + '<div class="info" onclick="switchProfile('+i+')"><b>'+escapeHtml(p.name)+'</b><span>'+escapeHtml(shortTagline)+'</span></div>'
+        + pillHtml
+        + '</div>';
+    }).join('');
+  }
+
+  /* =====================================================================
+     NEW PROFILE WIZARD
+  ===================================================================== */
+  var INSTRUMENTS = ['Violin','Viola','Cello','Bass','Piano','Voice','Guitar','Drums','Trumpet','Saxophone','Flute','Other'];
+  var GENRES = ['Classical','Jazz','Pop','Rock','Folk','R&B / Soul','Musical Theater','Country','Bluegrass','Electronic','World','Hip-Hop'];
+  var CATEGORIES = ['Weddings','Corporate Events','Funerals','Recitals','Religious Services','Session Work','Teaching','Private Parties'];
+  var WIZ_BTN_LABELS = ['Get started','Continue','Verify','Continue','Continue','Continue','Continue','Continue','Continue','Continue','Create Profile','Go to Profile'];
+
+  var wizardStep = 0;
+  var wizardData = null;
+
+  function buildWizardGrids(){
+    document.getElementById('wizInstrumentGrid').innerHTML = INSTRUMENTS.map(function(inst){
+      return '<div class="instrument-opt" onclick="pickInstrument(this,\''+inst+'\')">'+inst+'</div>';
+    }).join('');
+    document.getElementById('wizGenreGrid').innerHTML = GENRES.map(function(g){
+      return '<div class="chip-pick" onclick="toggleMulti(this, wizardData.genres, \''+g+'\')">'+g+'</div>';
+    }).join('');
+    document.getElementById('wizAvailGrid').innerHTML = CATEGORIES.map(function(c){
+      return '<div class="chip-pick" onclick="toggleMulti(this, wizardData.availability, \''+c+'\')">'+c+'</div>';
+    }).join('');
+  }
+
+  function pickInstrument(el, inst){
+    document.querySelectorAll('#wizInstrumentGrid .instrument-opt').forEach(function(o){ o.classList.remove('on'); });
+    el.classList.add('on');
+    wizardData.instrument = inst;
+    wizardValidate();
+  }
+
+  function toggleMulti(el, arr, val){
+    el.classList.toggle('on');
+    var idx = arr.indexOf(val);
+    if(el.classList.contains('on')){ if(idx === -1) arr.push(val); }
+    else { if(idx > -1) arr.splice(idx, 1); }
+    wizardValidate();
+  }
+
+  function otpAdvance(el){
+    el.value = el.value.replace(/\D/g,'');
+    if(el.value.length === 1){
+      var next = el.nextElementSibling;
+      if(next && next.classList.contains('otp-box')) next.focus();
+    }
+    wizardValidate();
+  }
+
+  function wizardBioCount(){
+    var v = document.getElementById('wizBio').value;
+    document.getElementById('wizBioCount').textContent = v.length;
+  }
+
+  function wizardPhotoChosen(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    var url = URL.createObjectURL(file);
+    wizardData.photoUrl = url;
+    var prev = document.getElementById('wizPhotoPreview');
+    prev.style.background = 'transparent';
+    prev.innerHTML = '<img src="'+url+'">';
+  }
+
+  function formatPhoneDisplay(v){
+    var digits = (v||'').replace(/\D/g,'');
+    if(digits.length === 10){
+      return '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+    }
+    return v || 'your number';
+  }
+
+  function wizardValidate(){
+    var btn = document.getElementById('wizContinueBtn');
+    var ok = true;
+    if(wizardStep === 1){
+      var digits = (document.getElementById('wizPhone').value||'').replace(/\D/g,'');
+      ok = digits.length >= 10;
+    } else if(wizardStep === 2){
+      var boxes = document.querySelectorAll('#screen-newprofile .otp-box');
+      ok = Array.prototype.every.call(boxes, function(b){ return b.value.length === 1; });
+    } else if(wizardStep === 3){
+      ok = document.getElementById('wizName').value.trim().length > 0 && !!wizardData.instrument;
+    } else if(wizardStep === 4){
+      ok = document.getElementById('wizYears').value !== '' && document.getElementById('wizLocation').value.trim().length > 0;
+    } else if(wizardStep === 5){
+      ok = wizardData.genres.length > 0;
+    }
+    btn.disabled = !ok;
+  }
+
+  function reviewRow(label, value){
+    return '<div class="review-card"><div class="rl">'+label+'</div><div class="rv">'+escapeHtml(value)+'</div></div>';
+  }
+
+  function renderWizardReview(){
+    var d = wizardData;
+    var rate = (d.rateMin || d.rateMax) ? ('$'+(d.rateMin||'0')+'–'+(d.rateMax||d.rateMin||'0')) : 'Not set';
+    var html = '';
+    html += reviewRow('Name', d.name || '—');
+    html += reviewRow('Instrument', d.instrument || '—');
+    html += reviewRow('Experience', (d.years ? d.years+' yrs' : '—') + ' · ' + (d.location || '—'));
+    html += reviewRow('Genres', d.genres.length ? d.genres.join(', ') : 'None selected');
+    html += reviewRow('Available for', d.availability.length ? d.availability.join(', ') : 'None selected');
+    html += reviewRow('Typical rate', rate);
+    html += reviewRow('Bio', d.bio || 'No bio added');
+    document.getElementById('wizReview').innerHTML = html;
+  }
+
+  function renderWizardStep(){
+    document.querySelectorAll('.wiz-step').forEach(function(s){ s.classList.remove('active'); });
+    var stepEl = document.querySelector('.wiz-step[data-step="'+wizardStep+'"]');
+    if(stepEl) stepEl.classList.add('active');
+
+    var track = document.getElementById('wizProgressTrack');
+    var count = document.getElementById('wizStepCount');
+    var backRow = document.getElementById('wizBackRow');
+
+    if(wizardStep === 0 || wizardStep === 11){
+      track.style.display = 'none';
+      count.style.display = 'none';
+    } else {
+      track.style.display = 'block';
+      count.style.display = 'block';
+      document.getElementById('wizProgressFill').style.width = Math.round((wizardStep/10)*100) + '%';
+      count.textContent = 'Step ' + wizardStep + ' of 10';
+    }
+
+    if(wizardStep === 11){
+      backRow.style.visibility = 'hidden';
+    } else {
+      backRow.style.visibility = 'visible';
+      backRow.textContent = wizardStep === 0 ? '← cancel' : '← back';
+    }
+
+    if(wizardStep === 2){
+      document.getElementById('wizPhoneDisplay').textContent = formatPhoneDisplay(wizardData.phone);
+    }
+    if(wizardStep === 10){
+      renderWizardReview();
+    }
+
+    document.getElementById('wizContinueBtn').textContent = WIZ_BTN_LABELS[wizardStep];
+    wizardValidate();
+    document.querySelector('.wiz-content').scrollTop = 0;
+  }
+
+  function enterWizard(){
+    wizardStep = 0;
+    wizardData = { phone: accountPhone, name:'', instrument:'', years:'', location:'', genres:[], availability:[], rateMin:'', rateMax:'', bio:'', photoUrl:null };
+
+    document.getElementById('wizPhone').value = accountPhone;
+    document.getElementById('wizName').value = '';
+    document.getElementById('wizYears').value = '';
+    document.getElementById('wizLocation').value = '';
+    document.getElementById('wizRateMin').value = '';
+    document.getElementById('wizRateMax').value = '';
+    document.getElementById('wizBio').value = '';
+    document.getElementById('wizBioCount').textContent = '0';
+    var prev = document.getElementById('wizPhotoPreview');
+    prev.style.background = 'linear-gradient(135deg, var(--brass), var(--crimson))';
+    prev.innerHTML = '?';
+    document.querySelectorAll('#wizInstrumentGrid .instrument-opt').forEach(function(o){ o.classList.remove('on'); });
+    document.querySelectorAll('#wizGenreGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
+    document.querySelectorAll('#wizAvailGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
+    document.querySelectorAll('#screen-newprofile .otp-box').forEach(function(o){ o.value = ''; });
+
+    document.querySelector('.navbar').style.display = 'none';
+    showScreen('screen-newprofile');
+    renderWizardStep();
+  }
+
+  function exitWizard(target){
+    document.querySelector('.navbar').style.display = '';
+    showScreen(target);
+  }
+
+  function buildAvailability(selected){
+    var off = [];
+    var hidden = [];
+    CATEGORIES.forEach(function(c){
+      if(selected.indexOf(c) === -1){
+        if((selected.length + off.length) < 4){ off.push(c); }
+        else { hidden.push(c); }
+      }
+    });
+    return { on: selected.slice(), off: off, hidden: hidden };
+  }
+
+  function createProfileFromWizard(){
+    var d = wizardData;
+    var initials = (d.name || '').trim().split(/\s+/).filter(Boolean).map(function(w){ return w[0]; }).join('').substring(0,2).toUpperCase() || '??';
+    var colorPairs = [
+      'linear-gradient(135deg, var(--sage), var(--ink-3))',
+      'linear-gradient(135deg, var(--crimson), var(--ink-3))',
+      'linear-gradient(135deg, var(--brass), var(--sage))',
+      'linear-gradient(135deg, var(--ink-3), var(--brass))'
+    ];
+    var color = colorPairs[profiles.length % colorPairs.length];
+    var avail = buildAvailability(d.availability);
+    var rate = (d.rateMin || d.rateMax) ? ('$'+(d.rateMin||'0')+'–'+(d.rateMax||d.rateMin||'0')) : 'Not set yet';
+
+    var newProfile = {
+      initials: initials,
+      photoColor: color,
+      photoUrl: d.photoUrl,
+      name: d.name || 'New Profile',
+      tagline: (d.instrument || 'Musician') + ' &middot; ' + (d.location || 'Location not set') + (d.years ? (' &middot; ' + d.years + ' yrs experience') : ''),
+      badges: [{ label:'New on Opus' }, { label: d.instrument || 'Musician' }],
+      stats: [{ value:'0', label:'Gigs played' }, { value:'New', label:'On Opus' }, { value: rate, label:'Typical rate' }],
+      bio: d.bio || 'No bio added yet.',
+      genres: d.genres.slice(),
+      availableOn: avail.on,
+      availableOff: avail.off,
+      availableHidden: avail.hidden,
+      media: [],
+      ensembles: [],
+      reviews: [],
+      isNew: true,
+      phone: accountPhone
+    };
+    profiles.push(newProfile);
+    currentProfileIndex = profiles.length - 1;
+    renderActiveProfile();
+  }
+
+  function wizardNext(){
+    if(wizardStep === 1){ wizardData.phone = document.getElementById('wizPhone').value; }
+    else if(wizardStep === 3){ wizardData.name = document.getElementById('wizName').value.trim(); }
+    else if(wizardStep === 4){
+      wizardData.years = document.getElementById('wizYears').value;
+      wizardData.location = document.getElementById('wizLocation').value.trim();
+    }
+    else if(wizardStep === 7){
+      wizardData.rateMin = document.getElementById('wizRateMin').value;
+      wizardData.rateMax = document.getElementById('wizRateMax').value;
+    }
+    else if(wizardStep === 8){ wizardData.bio = document.getElementById('wizBio').value.trim(); }
+    else if(wizardStep === 10){ createProfileFromWizard(); wizardStep = 11; renderWizardStep(); return; }
+    else if(wizardStep === 11){ exitWizard('screen-profile'); return; }
+
+    wizardStep += 1;
+    renderWizardStep();
+  }
+
+  function wizardBack(){
+    if(wizardStep === 0){ exitWizard('screen-settings'); return; }
+    if(wizardStep === 11){ return; }
+    wizardStep -= 1;
+    renderWizardStep();
+  }
+
+  buildWizardGrids();
+  renderActiveProfile();
 </script>
 </body>
 </html>
