@@ -40,13 +40,16 @@ No install required — it's a single static file.
 
 - **Discover** — a searchable feed of live opportunities (a search bar sits above the cards
   and filters by event name, gig type, or location in real time) with mutual-connection trust
-  signals. A toggle at the top switches between **Discover** and **Organize Event**, so you can
-  flip back and forth between finding gigs and posting one.
-- **Organize Event** — reachable from the Discover toggle or from a dedicated button at the top
-  of the Profile screen. A form to post an event you're organizing: title, location, date &amp;
-  time, type of gig (wedding, funeral, corporate event, recital, religious service, fundraiser,
-  private party, other), desired musicians/instruments (multi-select), and compensation
-  expectations. Posting adds it to your profile's Events Organized section.
+  signals. The header matches every other tab's header size (a "discover · organize" subtitle,
+  same as "your network" on the Network tab), with a small "+" button in the top-right corner
+  that opens the Organize Event form.
+- **Organize Event** — opens as a full-screen popup modal over whatever screen you're on
+  (the "+" button on Discover, or a dedicated pill button at the top of the Profile screen) —
+  it slides up like a native sheet rather than navigating you to a new page, and can be
+  dismissed with the X, by tapping outside it, or by posting the event. The form covers title,
+  location, date &amp; time, type of gig (wedding, funeral, corporate event, recital, religious
+  service, fundraiser, private party, other), desired musicians/instruments (multi-select), and
+  compensation expectations. Posting adds it to your profile's Events Organized section.
 - **Gig Detail** — full posting info, "why this feels safe" network context, and an apply flow.
 - **Network** — your ensembles (Mezza Quartet, Grieg Duo — both tap through to full
   ensemble profiles with member rosters), mutual connections, and recommendations.
