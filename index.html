@@ -501,6 +501,38 @@
     background:var(--ink); color:var(--brass-light); border:none; cursor:pointer; flex-shrink:0;
   }
   .see.clickable{ cursor:pointer; text-decoration:underline; text-underline-offset:2px; }
+  .see.mini-add{ cursor:pointer; }
+
+  /* ===== Discover / Organize Event toggle ===== */
+  .discover-toggle{ display:flex; gap:6px; margin-top:10px; }
+  .toggle-btn{
+    font-family:'JetBrains Mono',monospace; font-size:11px; padding:7px 13px; border-radius:20px;
+    background:transparent; color:#C7CCDA; border:1px solid rgba(247,243,234,.22); cursor:pointer;
+  }
+  .toggle-btn.active{ background:rgba(224,185,117,.14); color:var(--brass-light); border-color:rgba(224,185,117,.3); }
+
+  /* ===== Profile: Organize Event button ===== */
+  .organize-event-btn{
+    position:absolute; top:16px; right:60px; display:flex; align-items:center; gap:5px;
+    font-family:'JetBrains Mono',monospace; font-size:10px; padding:8px 11px; border-radius:20px;
+    background:rgba(224,185,117,.14); color:var(--brass-light); border:1px solid rgba(224,185,117,.3); cursor:pointer;
+    white-space:nowrap;
+  }
+
+  /* ===== Organizer toggle (wizard + edit profile) ===== */
+  .organizer-toggle{
+    display:flex; align-items:center; gap:10px; padding:12px; border-radius:12px; border:1.5px solid var(--line);
+    background:#fff; cursor:pointer; margin:4px 0 14px; font-size:12.5px; color:var(--text-dark); line-height:1.4;
+  }
+  .organizer-toggle.on{ border-color:var(--ink); background:var(--parchment-2); }
+  .organizer-toggle .check{
+    width:19px; height:19px; border-radius:5px; border:1.5px solid var(--line); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; color:#fff; background:#fff;
+  }
+  .organizer-toggle.on .check{ background:var(--ink); border-color:var(--ink); }
+  .organizer-toggle .check svg{ opacity:0; }
+  .organizer-toggle.on .check svg{ opacity:1; }
+  .disabled-grid{ opacity:.4; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -521,7 +553,10 @@
       </div>
       <div class="topbar">
         <div class="brand"><svg class="clef-icon" viewBox="0 0 28 44" width="15" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 4 C10 4 7 10 11 15 C15 20 21 17 20 11 C19 7 14 7 14 11 C14 14 17 15 18 13"/><path d="M18 13 C16 20 15 28 15 35"/><path d="M15 35 C15 41 9 42 7 37 C5 33 10 30 13 33"/></svg>Op<span class="mark">u</span>s</div>
-        <div class="sub">discover &middot; gigs matched to you</div>
+        <div class="discover-toggle">
+          <button class="toggle-btn active" onclick="goToDiscoverScreen()">Discover</button>
+          <button class="toggle-btn" onclick="goToOrganizeScreen()">Organize Event</button>
+        </div>
       </div>
     </div>
     <div class="chiprow">
@@ -532,71 +567,51 @@
       <div class="chip">$300+</div>
     </div>
     <div class="content">
-      <div class="section-title">Because Mezza Quartet plays weddings <span class="see">12 nearby</span></div>
+      <input class="field-input" type="text" id="discoverSearch" placeholder="Search events, gig types, locations..." oninput="renderDiscoverFeed()" style="margin-bottom:14px;">
+      <div id="discoverFeed"></div>
+    </div>
+  </div>
 
-      <div class="card" onclick="showScreen('screen-gigdetail')" style="position:relative;">
-        <div class="tap-hint"><span class="ring"></span><span class="dot"></span></div>
-        <div class="tap-label">tap a card</div>
-        <div class="eyebrow">Wedding · Ceremony + Cocktail Hour</div>
-        <h3>String Quartet, Sat Aug 15</h3>
-        <div class="meta">Filoli Gardens, Woodside CA &middot; 5:00–7:30 PM</div>
-        <div class="tagrow">
-          <div class="tag">Violin ×2</div><div class="tag">Viola</div><div class="tag">Cello</div>
-          <div class="tag">Black tie</div>
-        </div>
-        <div class="row">
-          <div class="mutuals">
-            <div class="avatar" style="background:var(--sage)">NG</div>
-            <div class="avatar" style="background:var(--brass)">JL</div>
-            <div class="mutual-label">2 mutual connections</div>
-          </div>
-          <span class="rate">$450/musician</span>
+  <!-- ===================== SCREEN: ORGANIZE EVENT ===================== -->
+  <div class="screen" id="screen-organize">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
         </div>
       </div>
-
-      <div class="card">
-        <div class="eyebrow">House of Worship · Recurring</div>
-        <h3>Sunday Service Cellist</h3>
-        <div class="meta">First Congregational, Palo Alto CA &middot; Weekly</div>
-        <div class="tagrow"><div class="tag">Cello</div><div class="tag">Sight-read</div><div class="tag">Contemporary</div></div>
-        <div class="row">
-          <div class="mutuals">
-            <div class="avatar" style="background:var(--crimson)">MO</div>
-            <div class="mutual-label">Recommended by Prof. Osei</div>
-          </div>
-          <span class="rate">$120/service</span>
+      <div class="topbar">
+        <div class="back-row" onclick="goBack()">&larr; back</div>
+        <div class="brand" style="margin-top:8px; font-size:19px;">Organize an Event</div>
+        <div class="discover-toggle">
+          <button class="toggle-btn" onclick="goToDiscoverScreen()">Discover</button>
+          <button class="toggle-btn active" onclick="goToOrganizeScreen()">Organize Event</button>
         </div>
       </div>
+    </div>
+    <div class="content wiz-content">
+      <div class="field-label" style="margin-top:6px;">Event title</div>
+      <input class="field-input" type="text" id="orgTitle" placeholder="e.g. Fall Wedding Ceremony">
 
-      <div class="card">
-        <div class="eyebrow">Fundraiser · One evening</div>
-        <h3>Violin &amp; Piano Recital Set</h3>
-        <div class="meta">The Athenaeum, Pittsburgh PA &middot; 7:00–8:30 PM</div>
-        <div class="tagrow"><div class="tag">Violin</div><div class="tag">Piano</div><div class="tag">Romantic era</div></div>
-        <div class="row">
-          <div class="mutuals">
-            <div class="avatar" style="background:var(--ink-3)">SC</div>
-            <div class="mutual-label">Spencer Cha is applying</div>
-          </div>
-          <span class="rate">$350 flat</span>
-        </div>
-      </div>
+      <div class="field-label">Location</div>
+      <input class="field-input" type="text" id="orgLocation" placeholder="e.g. Filoli Gardens, Woodside CA">
 
-      <div class="section-title">Trusted by your network</div>
-      <div class="card">
-        <div class="eyebrow">Chamber Series · Application deadline Aug 3</div>
-        <h3>Contemporary Ensemble Reading</h3>
-        <div class="meta">Community Music Center, SF &middot; Sun Aug 24</div>
-        <div class="row">
-          <div class="mutuals">
-            <div class="avatar" style="background:var(--sage)">NG</div>
-            <div class="avatar" style="background:var(--brass)">JL</div>
-            <div class="avatar" style="background:var(--crimson)">ES</div>
-            <div class="mutual-label">3 connections applied</div>
-          </div>
-          <span class="rate">$275</span>
-        </div>
-      </div>
+      <div class="field-label">Date &amp; time</div>
+      <input class="field-input" type="text" id="orgWhen" placeholder="e.g. Sat, Nov 14 · 5:00–7:30 PM">
+
+      <div class="field-label">Type of gig</div>
+      <div class="chip-select" id="orgTypeGrid"></div>
+
+      <div class="field-label">Desired musicians / instruments</div>
+      <div class="chip-select" id="orgMusiciansGrid"></div>
+
+      <div class="field-label">Compensation expectations</div>
+      <input class="field-input" type="text" id="orgCompensation" placeholder="e.g. $450/musician or $1,200 flat">
+    </div>
+    <div class="wiz-footer">
+      <button class="btn block" onclick="submitOrganizeEvent()">Post Event</button>
     </div>
   </div>
 
@@ -851,6 +866,10 @@
       <div id="profileSwitcher" class="profile-switcher" style="display:none; padding-bottom:14px;"></div>
     </div>
     <div class="profile-hero" style="margin-top:-1px;">
+      <button class="organize-event-btn" onclick="goToOrganizeScreen()" aria-label="Organize an event">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
+        Organize Event
+      </button>
       <button class="settings-gear" onclick="openSettings()" aria-label="Settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
@@ -977,7 +996,11 @@
         <div class="wiz-sub">This is how organizers will see this profile.</div>
         <div class="field-label">Full name or profile name</div>
         <input class="field-input" type="text" id="wizName" placeholder="e.g. Cassandra May" oninput="wizardValidate()">
-        <div class="field-label">Primary instrument</div>
+        <div class="field-label">Instrument(s) — pick as many as apply</div>
+        <div class="organizer-toggle" id="wizOrganizerToggle" onclick="toggleOrganizer('wiz')">
+          <div class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <div>I don't play an instrument — I'm an event organizer</div>
+        </div>
         <div class="instrument-grid" id="wizInstrumentGrid"></div>
       </div>
 
@@ -1083,7 +1106,11 @@
       <div class="field-label" style="margin-top:6px;">Name</div>
       <input class="field-input" type="text" id="editName">
 
-      <div class="field-label">Primary instrument</div>
+      <div class="field-label">Instrument(s) — pick as many as apply</div>
+      <div class="organizer-toggle" id="editOrganizerToggle" onclick="toggleOrganizer('edit')">
+        <div class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div>I don't play an instrument — I'm an event organizer</div>
+      </div>
       <div class="instrument-grid" id="editInstrumentGrid"></div>
 
       <div class="field-row">
@@ -1158,6 +1185,78 @@
     </div>
     <div class="wiz-footer">
       <button class="btn block" onclick="submitRecommendation()">Post Recommendation</button>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: ADD MEDIA ===================== -->
+  <div class="screen" id="screen-addmedia">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="back-row" onclick="exitAddMedia()">&larr; cancel</div>
+        <div class="brand" style="margin-top:10px; font-size:19px;">Add Media</div>
+      </div>
+    </div>
+    <div class="content wiz-content">
+      <div class="field-label" style="margin-top:6px;">Caption</div>
+      <input class="field-input" type="text" id="mediaCaption" placeholder="e.g. Live at Filoli Gardens wedding">
+
+      <div class="field-label">File (optional, for demo)</div>
+      <label class="btn ghost block photo-upload-btn" style="cursor:pointer;">
+        Choose a file
+        <input type="file" accept="audio/*,video/*,image/*" id="mediaFileInput" style="display:none;" onchange="mediaFileChosen(event)">
+      </label>
+      <div class="field-hint" id="mediaFileName">No file chosen</div>
+    </div>
+    <div class="wiz-footer">
+      <button class="btn block" onclick="submitAddMedia()">Add Media</button>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: EVENTS ORGANIZED (LIST) ===================== -->
+  <div class="screen" id="screen-myevents">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="back-row" onclick="showScreen('screen-profile')">&larr; profile</div>
+        <div class="brand" style="margin-top:10px; font-size:19px;">Events Organized</div>
+      </div>
+    </div>
+    <div class="content">
+      <div id="myEventsList"></div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: EVENT DETAIL ===================== -->
+  <div class="screen" id="screen-eventdetail">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="back-row" onclick="goBack()">&larr; back</div>
+        <div class="brand" style="margin-top:10px; font-size:19px;" id="eventDetailTitle">Event</div>
+        <div class="sub" id="eventDetailSub"></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="detail-grid" id="eventDetailBody" style="margin-top:6px;"></div>
     </div>
   </div>
 
@@ -1540,7 +1639,7 @@
   </div>
 
   <div class="navbar">
-    <div class="navitem active" onclick="setNav(this,'screen-discover')">
+    <div class="navitem active" id="navDiscoverItem" onclick="setNav(this,'screen-discover')">
       <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
       Discover
     </div>
@@ -1552,7 +1651,7 @@
       <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
       Messages
     </div>
-    <div class="navitem" onclick="setNav(this,'screen-profile')">
+    <div class="navitem" id="navProfileItem" onclick="setNav(this,'screen-profile')">
       <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
       Profile
     </div>
@@ -1561,12 +1660,21 @@
 
 <script>
   var navHistory = ['screen-discover'];
+  // Screens with a fixed bottom form-footer (.wiz-footer) need the tab bar hidden
+  // so the two fixed bars don't stack on top of each other.
+  var FOCUSED_SCREENS = ['screen-newprofile', 'screen-editprofile', 'screen-recommend', 'screen-organize', 'screen-addmedia'];
+
+  function applyNavbarVisibility(id){
+    var navbar = document.querySelector('.navbar');
+    if(navbar) navbar.style.display = FOCUSED_SCREENS.indexOf(id) > -1 ? 'none' : '';
+  }
 
   function showScreen(id){
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.getElementById(id).scrollTop = 0;
     if(navHistory[navHistory.length - 1] !== id){ navHistory.push(id); }
+    applyNavbarVisibility(id);
   }
   function goBack(){
     if(navHistory.length > 1){ navHistory.pop(); }
@@ -1574,6 +1682,7 @@
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(prev).classList.add('active');
     document.getElementById(prev).scrollTop = 0;
+    applyNavbarVisibility(prev);
   }
   function setNav(el, id){
     document.querySelectorAll('.navitem').forEach(n => n.classList.remove('active'));
@@ -1607,15 +1716,16 @@
       photoColor: 'linear-gradient(135deg, var(--brass), var(--crimson))',
       photoUrl: null,
       name: 'Cassandra May',
-      instrument: 'Violin',
+      instruments: ['Violin'],
+      isOrganizer: false,
       location: 'Pittsburgh, PA',
       years: '18',
-      credential: 'Carnegie Mellon BFA',
+      credential: '',
       rateMin: '250',
       rateMax: '450',
       gigsPlayed: 140,
       rating: 5.0,
-      bio: 'Freelance violinist with 18 years of performance experience across chamber, orchestral, and private-event settings. BFA in Violin Performance from Carnegie Mellon University. Founding member of the Mezza Quartet, and one half of the Grieg Duo alongside pianist Spencer Cha. Comfortable with formal ceremonies, recital programs, and sight-reading on short notice.',
+      bio: 'Freelance violinist with 18 years of performance experience across chamber, orchestral, and private-event settings. Founding member of the Mezza Quartet, and one half of the Grieg Duo alongside pianist Spencer Cha. Comfortable with formal ceremonies, recital programs, and sight-reading on short notice.',
       genres: ['Classical', 'Jazz', 'Pop'],
       availableOn: ['Weddings', 'Corporate Events'],
       availableOff: ['Funerals', 'Recitals'],
@@ -1629,6 +1739,9 @@
         { text:'"Punctual, beautifully prepared, and easy to coordinate with day-of."', who:'— Elena Petrova, Wedding Planner' },
         { text:'"Eighteen years of stage experience and it shows — poised, precise, and generous with the rest of the ensemble."', who:'— Prof. Miriam Osei, Carnegie Mellon School of Music' }
       ],
+      eventsOrganized: [
+        { title:'CMU Alumni Chamber Night', location:'Kresge Recital Hall, Pittsburgh PA', when:'Sat, Oct 3 · 7:00–9:00 PM', gigType:'Recital', desiredMusicians:['Violin','Viola','Cello'], compensation:'$200/musician' }
+      ],
       isNew: false,
       phone: accountPhone
     }
@@ -1641,14 +1754,20 @@
     return div.innerHTML;
   }
 
+  function primaryRoleLabel(p){
+    if(p.isOrganizer) return 'Event Organizer';
+    if(p.instruments && p.instruments.length) return p.instruments.join(', ');
+    return 'Musician';
+  }
   function buildTagline(p){
-    return escapeHtml(p.instrument || 'Musician') + ' &middot; ' + escapeHtml(p.location || 'Location not set')
+    return escapeHtml(primaryRoleLabel(p)) + ' &middot; ' + escapeHtml(p.location || 'Location not set')
       + (p.years ? (' &middot; ' + escapeHtml(p.years) + ' yrs experience') : '');
   }
   function buildBadges(p){
     var badges = p.ensembles.map(function(e){ return { label:e.name, onclick:e.onclick }; });
     if(p.credential) badges.push({ label:p.credential });
-    if(p.isNew && p.ensembles.length === 0) badges.push({ label:'New on Opus' });
+    if(p.isOrganizer) badges.push({ label:'Event Organizer' });
+    if(p.isNew && p.ensembles.length === 0 && !p.isOrganizer) badges.push({ label:'New on Opus' });
     return badges;
   }
   function buildRateLabel(p){
@@ -1720,11 +1839,11 @@
       + (p.availableHidden.length ? '<div class="tag avail more" onclick="revealMore(this)">+ More</div>' : '');
     var availHtml = '<div class="section-title">Available For</div><div class="tagrow">'+availChips+'</div>';
 
-    var mediaHtml;
+    var mediaHtml = '<div class="section-title">Media<span class="see clickable mini-add" onclick="openAddMedia()">+ Add</span></div>';
     if(p.media.length){
-      mediaHtml = '<div class="section-title">Media</div><div class="media-strip">' + p.media.map(function(m){ return '<div class="media-thumb">'+escapeHtml(m)+'</div>'; }).join('') + '</div>';
+      mediaHtml += '<div class="media-strip">' + p.media.map(function(m){ return '<div class="media-thumb">'+escapeHtml(m)+'</div>'; }).join('') + '</div>';
     } else {
-      mediaHtml = '<div class="section-title">Media</div><div class="empty-note">No media yet — add a recording or reel to help organizers hear you play.</div>';
+      mediaHtml += '<div class="empty-note">No media yet — add a recording or reel to help organizers hear you play.</div>';
     }
 
     var ensemblesHtml;
@@ -1734,6 +1853,17 @@
       }).join('');
     } else {
       ensemblesHtml = '<div class="section-title" style="margin-top:16px;">Ensembles</div><div class="empty-note">You haven\'t joined or created an ensemble on this profile yet.</div>';
+    }
+
+    var eventsList = p.eventsOrganized || [];
+    var eventsHtml;
+    if(eventsList.length){
+      eventsHtml = '<div class="section-title" style="margin-top:16px;">Events Organized<span class="see clickable" onclick="openMyEvents()">'+eventsList.length+' organized</span></div>'
+        + eventsList.slice(0, 3).map(function(ev, i){
+            return '<div class="list-row" onclick="openEventDetail('+i+')"><div class="avatar" style="background:var(--ink-3); margin-left:0; width:38px; height:38px; font-size:11px;">'+escapeHtml((ev.gigType||'EV').slice(0,2).toUpperCase())+'</div><div class="info"><b>'+escapeHtml(ev.title)+'</b><span>'+escapeHtml(ev.location)+'</span></div><div class="chev">&rsaquo;</div></div>';
+          }).join('');
+    } else {
+      eventsHtml = '<div class="section-title" style="margin-top:16px;">Events Organized</div><div class="empty-note">You haven\'t organized any events yet. Tap "Organize Event" above to post one.</div>';
     }
 
     var reviewsHtml;
@@ -1747,9 +1877,69 @@
 
     var buttonsHtml = '<div class="btn-row" style="margin-top:8px;"><button class="btn" onclick="openEditProfile()">Edit profile</button><button class="btn ghost" onclick="openSheet()">Share profile</button></div>';
 
-    document.getElementById('profileContent').innerHTML = statsHtml + bioHtml + genresHtml + availHtml + mediaHtml + ensemblesHtml + reviewsHtml + buttonsHtml;
+    document.getElementById('profileContent').innerHTML = statsHtml + bioHtml + genresHtml + availHtml + mediaHtml + ensemblesHtml + eventsHtml + reviewsHtml + buttonsHtml;
 
     renderSwitcher();
+  }
+
+  /* =====================================================================
+     DISCOVER FEED — searchable gig / opportunity cards
+  ===================================================================== */
+  var GIGS = [
+    {
+      id:'gig1', eyebrow:'Wedding · Tomorrow', title:'String Quartet, Sat Aug 15',
+      meta:'Filoli Gardens, Woodside CA · 2.5 hrs', tags:['Wedding','Classical','Formal'],
+      mutuals:[{initials:'NG',color:'var(--sage)'},{initials:'JL',color:'var(--brass)'}],
+      mutualLabel:'2 mutual connections applying', rate:'$450/musician',
+      clickable:true, onclick:"showScreen('screen-gigdetail')"
+    },
+    {
+      id:'gig2', eyebrow:'Religious Service · Sunday', title:'Sunday Service Cellist',
+      meta:'First Congregational Church, Pittsburgh PA', tags:['Religious Service','Classical'],
+      mutuals:[], mutualLabel:'', rate:'$120/service'
+    },
+    {
+      id:'gig3', eyebrow:'Recital · Next Week', title:'Violin & Piano Recital Set',
+      meta:'The Athenaeum, Pittsburgh PA', tags:['Recital','Classical'],
+      mutuals:[], mutualLabel:'', rate:'$350 flat'
+    },
+    {
+      id:'gig4', eyebrow:'Session Work · Trusted by your network', title:'Contemporary Ensemble Reading',
+      meta:'Community Music Center, San Francisco CA', tags:['Session Work','Contemporary'],
+      mutuals:[{initials:'ES',color:'var(--ink-3)'}], mutualLabel:'Elly Suzuki recommends', rate:'$275'
+    }
+  ];
+
+  function gigCardHtml(g){
+    var rowHtml;
+    if(g.mutuals.length){
+      rowHtml = '<div class="row"><div class="mutuals">'
+        + g.mutuals.map(function(m){ return '<div class="avatar" style="background:'+m.color+'">'+m.initials+'</div>'; }).join('')
+        + '<span class="mutual-label">'+escapeHtml(g.mutualLabel)+'</span></div><span class="rate">'+escapeHtml(g.rate)+'</span></div>';
+    } else {
+      rowHtml = '<div class="row"><span></span><span class="rate">'+escapeHtml(g.rate)+'</span></div>';
+    }
+    return '<div class="card"'+(g.clickable ? ' onclick="'+g.onclick+'" style="cursor:pointer;"' : '')+'>'
+      + '<div class="eyebrow">'+escapeHtml(g.eyebrow)+'</div>'
+      + '<h3>'+escapeHtml(g.title)+'</h3>'
+      + '<div class="meta">'+escapeHtml(g.meta)+'</div>'
+      + '<div class="tagrow">'+g.tags.map(function(t){ return '<div class="tag">'+escapeHtml(t)+'</div>'; }).join('')+'</div>'
+      + rowHtml
+      + '</div>';
+  }
+
+  function renderDiscoverFeed(){
+    var q = (document.getElementById('discoverSearch').value || '').trim().toLowerCase();
+    var results = !q ? GIGS : GIGS.filter(function(g){
+      var hay = (g.eyebrow+' '+g.title+' '+g.meta+' '+g.tags.join(' ')).toLowerCase();
+      return hay.indexOf(q) > -1;
+    });
+    var el = document.getElementById('discoverFeed');
+    if(results.length){
+      el.innerHTML = results.map(gigCardHtml).join('');
+    } else {
+      el.innerHTML = '<div class="empty-note">No opportunities match &ldquo;'+escapeHtml(document.getElementById('discoverSearch').value.trim())+'&rdquo;. Try a different search.</div>';
+    }
   }
 
   /* =====================================================================
@@ -1771,7 +1961,7 @@
       var photoHtml = p.photoUrl ? '<img src="'+p.photoUrl+'">' : p.initials;
       return '<div class="profile-row">'
         + '<div class="sw-avatar" style="background:'+(p.photoUrl?'transparent':p.photoColor)+'; overflow:hidden;">'+photoHtml+'</div>'
-        + '<div class="info" onclick="switchProfile('+i+')"><b>'+escapeHtml(p.name)+'</b><span>'+escapeHtml(p.instrument||'Musician')+'</span></div>'
+        + '<div class="info" onclick="switchProfile('+i+')"><b>'+escapeHtml(p.name)+'</b><span>'+escapeHtml(primaryRoleLabel(p))+'</span></div>'
         + pillHtml
         + '<button class="row-delete-btn" onclick="confirmDeleteProfile('+i+')" aria-label="Delete profile"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>'
         + '</div>';
@@ -1841,7 +2031,7 @@
 
   function buildWizardGrids(){
     document.getElementById('wizInstrumentGrid').innerHTML = INSTRUMENTS.map(function(inst){
-      return '<div class="instrument-opt" onclick="pickInstrument(this,\''+inst+'\',\'wizInstrumentGrid\')">'+inst+'</div>';
+      return '<div class="instrument-opt" onclick="toggleMulti(this, wizardData.instruments, \''+inst+'\')">'+inst+'</div>';
     }).join('');
     document.getElementById('wizGenreGrid').innerHTML = GENRES.map(function(g){
       return '<div class="chip-pick" onclick="toggleMulti(this, wizardData.genres, \''+g+'\')">'+g+'</div>';
@@ -1853,7 +2043,7 @@
 
   function buildEditGrids(){
     document.getElementById('editInstrumentGrid').innerHTML = INSTRUMENTS.map(function(inst){
-      return '<div class="instrument-opt" onclick="pickInstrument(this,\''+inst+'\',\'editInstrumentGrid\')">'+inst+'</div>';
+      return '<div class="instrument-opt" onclick="toggleMulti(this, editProfileData.instruments, \''+inst+'\')">'+inst+'</div>';
     }).join('');
     document.getElementById('editGenreGrid').innerHTML = GENRES.map(function(g){
       return '<div class="chip-pick" onclick="toggleMulti(this, editProfileData.genres, \''+g+'\')">'+g+'</div>';
@@ -1863,18 +2053,27 @@
     }).join('');
   }
 
-  function pickInstrument(el, inst, groupId){
-    document.querySelectorAll('#'+groupId+' .instrument-opt').forEach(function(o){ o.classList.remove('on'); });
-    el.classList.add('on');
-    if(groupId === 'wizInstrumentGrid'){ wizardData.instrument = inst; wizardValidate(); }
-    else { editProfileData.instrument = inst; }
-  }
-
   function toggleMulti(el, arr, val){
     el.classList.toggle('on');
     var idx = arr.indexOf(val);
     if(el.classList.contains('on')){ if(idx === -1) arr.push(val); }
     else { if(idx > -1) arr.splice(idx, 1); }
+    wizardValidate();
+  }
+
+  function toggleOrganizer(ctx){
+    var data = ctx === 'wiz' ? wizardData : editProfileData;
+    var toggleEl = document.getElementById(ctx + 'OrganizerToggle');
+    var gridEl = document.getElementById(ctx === 'wiz' ? 'wizInstrumentGrid' : 'editInstrumentGrid');
+    data.isOrganizer = !data.isOrganizer;
+    toggleEl.classList.toggle('on', data.isOrganizer);
+    if(data.isOrganizer){
+      data.instruments.length = 0;
+      gridEl.querySelectorAll('.instrument-opt').forEach(function(o){ o.classList.remove('on'); });
+      gridEl.classList.add('disabled-grid');
+    } else {
+      gridEl.classList.remove('disabled-grid');
+    }
     wizardValidate();
   }
 
@@ -1920,7 +2119,7 @@
       var boxes = document.querySelectorAll('#screen-newprofile .otp-box');
       ok = Array.prototype.every.call(boxes, function(b){ return b.value.length === 1; });
     } else if(wizardStep === 3){
-      ok = document.getElementById('wizName').value.trim().length > 0 && !!wizardData.instrument;
+      ok = document.getElementById('wizName').value.trim().length > 0 && (wizardData.isOrganizer || wizardData.instruments.length > 0);
     } else if(wizardStep === 4){
       ok = document.getElementById('wizYears').value !== '' && document.getElementById('wizLocation').value.trim().length > 0;
     } else if(wizardStep === 5){
@@ -1987,7 +2186,7 @@
 
   function enterWizard(){
     wizardStep = 0;
-    wizardData = { phone: accountPhone, name:'', instrument:'', years:'', location:'', genres:[], availability:[], rateMin:'', rateMax:'', bio:'', photoUrl:null };
+    wizardData = { phone: accountPhone, name:'', instruments:[], isOrganizer:false, years:'', location:'', genres:[], availability:[], rateMin:'', rateMax:'', bio:'', photoUrl:null };
 
     document.getElementById('wizPhone').value = accountPhone;
     document.getElementById('wizName').value = '';
@@ -2000,6 +2199,8 @@
     var prev = document.getElementById('wizPhotoPreview');
     prev.style.background = 'linear-gradient(135deg, var(--brass), var(--crimson))';
     prev.innerHTML = '?';
+    document.getElementById('wizOrganizerToggle').classList.remove('on');
+    document.getElementById('wizInstrumentGrid').classList.remove('disabled-grid');
     document.querySelectorAll('#wizInstrumentGrid .instrument-opt').forEach(function(o){ o.classList.remove('on'); });
     document.querySelectorAll('#wizGenreGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
     document.querySelectorAll('#wizAvailGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
@@ -2044,7 +2245,8 @@
       photoColor: color,
       photoUrl: d.photoUrl,
       name: d.name || 'New Profile',
-      instrument: d.instrument || '',
+      instruments: d.instruments.slice(),
+      isOrganizer: !!d.isOrganizer,
       location: d.location || '',
       years: d.years || '',
       credential: '',
@@ -2060,6 +2262,7 @@
       media: [],
       ensembles: [],
       reviews: [],
+      eventsOrganized: [],
       isNew: true,
       phone: accountPhone
     };
@@ -2102,7 +2305,8 @@
   function openEditProfile(){
     var p = profiles[currentProfileIndex];
     editProfileData = {
-      instrument: p.instrument || '',
+      instruments: (p.instruments || []).slice(),
+      isOrganizer: !!p.isOrganizer,
       genres: p.genres.slice(),
       availability: p.availableOn.slice(),
       photoUrl: p.photoUrl
@@ -2127,8 +2331,12 @@
     }
 
     document.querySelectorAll('#editInstrumentGrid .instrument-opt').forEach(function(o){
-      o.classList.toggle('on', o.textContent === p.instrument);
+      o.classList.toggle('on', editProfileData.instruments.indexOf(o.textContent) > -1);
     });
+    var editToggleEl = document.getElementById('editOrganizerToggle');
+    var editGridEl = document.getElementById('editInstrumentGrid');
+    editToggleEl.classList.toggle('on', editProfileData.isOrganizer);
+    editGridEl.classList.toggle('disabled-grid', editProfileData.isOrganizer);
     document.querySelectorAll('#editGenreGrid .chip-pick').forEach(function(o){
       o.classList.toggle('on', editProfileData.genres.indexOf(o.textContent) > -1);
     });
@@ -2164,7 +2372,8 @@
     var d = editProfileData;
 
     p.name = document.getElementById('editName').value.trim() || p.name;
-    p.instrument = d.instrument || p.instrument;
+    p.instruments = d.instruments.slice();
+    p.isOrganizer = !!d.isOrganizer;
     p.years = document.getElementById('editYears').value;
     p.location = document.getElementById('editLocation').value.trim();
     p.credential = document.getElementById('editCredential').value.trim();
@@ -2186,6 +2395,176 @@
     document.querySelector('.navbar').style.display = '';
     renderActiveProfile();
     showScreen('screen-profile');
+  }
+
+  /* =====================================================================
+     ORGANIZE EVENT
+  ===================================================================== */
+  var GIG_TYPES = ['Wedding','Funeral','Corporate Event','Recital','Religious Service','Fundraiser','Private Party','Other'];
+  var organizeEventData = { gigType:'', desiredMusicians:[] };
+
+  function buildOrganizeGrids(){
+    document.getElementById('orgTypeGrid').innerHTML = GIG_TYPES.map(function(t){
+      return '<div class="chip-pick" onclick="pickGigType(this,\''+t+'\')">'+t+'</div>';
+    }).join('');
+    document.getElementById('orgMusiciansGrid').innerHTML = INSTRUMENTS.map(function(inst){
+      return '<div class="chip-pick" onclick="toggleMulti(this, organizeEventData.desiredMusicians, \''+inst+'\')">'+inst+'</div>';
+    }).join('');
+  }
+
+  function pickGigType(el, type){
+    document.querySelectorAll('#orgTypeGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
+    el.classList.add('on');
+    organizeEventData.gigType = type;
+  }
+
+  function resetOrganizeForm(){
+    document.getElementById('orgTitle').value = '';
+    document.getElementById('orgLocation').value = '';
+    document.getElementById('orgWhen').value = '';
+    document.getElementById('orgCompensation').value = '';
+    organizeEventData = { gigType:'', desiredMusicians:[] };
+    document.querySelectorAll('#orgTypeGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
+    document.querySelectorAll('#orgMusiciansGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
+  }
+
+  function goToDiscoverScreen(){
+    document.querySelectorAll('.navitem').forEach(function(n){ n.classList.remove('active'); });
+    document.getElementById('navDiscoverItem').classList.add('active');
+    navHistory = ['screen-discover'];
+    showScreen('screen-discover');
+  }
+
+  function goToOrganizeScreen(){
+    resetOrganizeForm();
+    showScreen('screen-organize');
+  }
+
+  function submitOrganizeEvent(){
+    var title = document.getElementById('orgTitle').value.trim();
+    var location = document.getElementById('orgLocation').value.trim();
+    if(!title || !location){
+      showAlert({
+        title:'Missing info',
+        message:'Please add at least an event title and location before posting.',
+        confirmText:'Got it', singleButton:true
+      });
+      return;
+    }
+    var event = {
+      title: title,
+      location: location,
+      when: document.getElementById('orgWhen').value.trim() || 'Date & time TBD',
+      gigType: organizeEventData.gigType || 'Event',
+      desiredMusicians: organizeEventData.desiredMusicians.slice(),
+      compensation: document.getElementById('orgCompensation').value.trim() || 'Not specified'
+    };
+    var p = profiles[currentProfileIndex];
+    p.eventsOrganized = p.eventsOrganized || [];
+    p.eventsOrganized.unshift(event);
+    renderActiveProfile();
+
+    document.querySelectorAll('.navitem').forEach(function(n){ n.classList.remove('active'); });
+    document.getElementById('navProfileItem').classList.add('active');
+    navHistory = ['screen-profile'];
+    showScreen('screen-profile');
+
+    showAlert({
+      title:'Event posted',
+      message:'"'+title+'" has been added to your Events Organized.',
+      confirmText:'Done', singleButton:true
+    });
+  }
+
+  /* =====================================================================
+     ADD MEDIA
+  ===================================================================== */
+  var addMediaFile = null;
+
+  function openAddMedia(){
+    document.getElementById('mediaCaption').value = '';
+    document.getElementById('mediaFileName').textContent = 'No file chosen';
+    document.getElementById('mediaFileInput').value = '';
+    addMediaFile = null;
+    document.querySelector('.navbar').style.display = 'none';
+    showScreen('screen-addmedia');
+  }
+
+  function exitAddMedia(){
+    document.querySelector('.navbar').style.display = '';
+    goBack();
+  }
+
+  function mediaFileChosen(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    addMediaFile = file;
+    document.getElementById('mediaFileName').textContent = file.name;
+  }
+
+  function submitAddMedia(){
+    var caption = document.getElementById('mediaCaption').value.trim();
+    if(!caption){
+      showAlert({
+        title:'Add a caption',
+        message:'Give this media a short caption before adding it to your profile.',
+        confirmText:'Got it', singleButton:true
+      });
+      return;
+    }
+    var p = profiles[currentProfileIndex];
+    p.media.push('▶ ' + caption);
+    renderActiveProfile();
+    document.querySelector('.navbar').style.display = '';
+    goBack();
+  }
+
+  /* =====================================================================
+     EVENTS ORGANIZED — list + detail
+  ===================================================================== */
+  var currentEventIndex = 0;
+
+  function openMyEvents(){
+    renderMyEvents();
+    showScreen('screen-myevents');
+  }
+
+  function renderMyEvents(){
+    var p = profiles[currentProfileIndex];
+    var events = p.eventsOrganized || [];
+    var el = document.getElementById('myEventsList');
+    if(events.length){
+      el.innerHTML = events.map(function(ev, i){
+        return '<div class="list-row" onclick="openEventDetail('+i+')"><div class="avatar" style="background:var(--ink-3); margin-left:0; width:38px; height:38px; font-size:11px;">'+escapeHtml((ev.gigType||'EV').slice(0,2).toUpperCase())+'</div><div class="info"><b>'+escapeHtml(ev.title)+'</b><span>'+escapeHtml(ev.location)+' &middot; '+escapeHtml(ev.when)+'</span></div><div class="chev">&rsaquo;</div></div>';
+      }).join('');
+    } else {
+      el.innerHTML = '<div class="empty-note">You haven\'t organized any events yet.</div>';
+    }
+  }
+
+  function detailRow(label, value){
+    return '<div class="detail-block"><div class="detail-label">'+escapeHtml(label)+'</div><div class="detail-value">'+escapeHtml(value)+'</div></div>';
+  }
+
+  function openEventDetail(i){
+    currentEventIndex = i;
+    renderEventDetail();
+    showScreen('screen-eventdetail');
+  }
+
+  function renderEventDetail(){
+    var p = profiles[currentProfileIndex];
+    var ev = (p.eventsOrganized || [])[currentEventIndex];
+    if(!ev) return;
+    document.getElementById('eventDetailTitle').textContent = ev.title;
+    document.getElementById('eventDetailSub').textContent = ev.location + ' · ' + ev.when;
+    document.getElementById('eventDetailBody').innerHTML =
+      detailRow('Type of gig', ev.gigType || 'Event')
+      + detailRow('Location', ev.location)
+      + detailRow('Date & time', ev.when)
+      + detailRow('Desired musicians', ev.desiredMusicians && ev.desiredMusicians.length ? ev.desiredMusicians.join(', ') : 'Open to all instruments')
+      + detailRow('Compensation', ev.compensation || 'Not specified')
+      + detailRow('Organized by', p.name);
   }
 
   /* =====================================================================
@@ -2380,6 +2759,8 @@
 
   buildWizardGrids();
   buildEditGrids();
+  buildOrganizeGrids();
+  renderDiscoverFeed();
   renderActiveProfile();
   renderMutualPreview();
   renderMutualCount();

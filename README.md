@@ -38,7 +38,15 @@ No install required — it's a single static file.
 
 ## What's in the prototype right now
 
-- **Discover** — a matched gig feed with filters and mutual-connection trust signals.
+- **Discover** — a searchable feed of live opportunities (a search bar sits above the cards
+  and filters by event name, gig type, or location in real time) with mutual-connection trust
+  signals. A toggle at the top switches between **Discover** and **Organize Event**, so you can
+  flip back and forth between finding gigs and posting one.
+- **Organize Event** — reachable from the Discover toggle or from a dedicated button at the top
+  of the Profile screen. A form to post an event you're organizing: title, location, date &amp;
+  time, type of gig (wedding, funeral, corporate event, recital, religious service, fundraiser,
+  private party, other), desired musicians/instruments (multi-select), and compensation
+  expectations. Posting adds it to your profile's Events Organized section.
 - **Gig Detail** — full posting info, "why this feels safe" network context, and an apply flow.
 - **Network** — your ensembles (Mezza Quartet, Grieg Duo — both tap through to full
   ensemble profiles with member rosters), mutual connections, and recommendations.
@@ -48,23 +56,27 @@ No install required — it's a single static file.
   (applied, hired, payment pending).
 - **Profile** — your own bio, genres, an editable "Available For" chip list (weddings,
   funerals, corporate events, etc. — click to toggle, "+ More" reveals additional options),
-  media, linked ensembles, and reviews. "Share profile" opens a share sheet (Text / Email /
-  Copy Link — currently visual only, no real send).
+  media (with a "+ Add" button to add a new recording/reel with a caption), linked ensembles,
+  an **Events Organized** section (tap through to a full list, then into any event's detail
+  view), and reviews. "Share profile" opens a share sheet (Text / Email / Copy Link —
+  currently visual only, no real send).
 - **Settings** — reached via the gear icon on your Profile screen. Lists every profile tied
   to your phone number (with a one-tap switcher and a delete icon on each row — deleting is
   blocked with an explanatory alert if it's your only remaining profile), plus placeholder
   rows for payment, notifications, privacy, and help.
 - **New Profile wizard** — "New Profile" in Settings (or the "+" avatar in the profile
   switcher strip) launches a full-screen, 10-step onboarding flow: phone number → 6-digit
-  verification code → name & instrument → experience & location → genres → availability →
-  typical rate → bio → optional photo → review → confirmation. Finishing the flow generates
-  a brand-new profile object (with correct empty states for a musician who has no gigs,
-  reviews, ensembles, or media yet) and switches you into it. You can flip between profiles
-  anytime from the avatar strip at the top of Profile, or from Settings.
+  verification code → name & instrument(s) → experience & location → genres → availability →
+  typical rate → bio → optional photo → review → confirmation. The instrument step supports
+  picking more than one instrument, or toggling "I don't play an instrument — I'm an event
+  organizer" to skip instruments entirely and register as an organizer instead. Finishing the
+  flow generates a brand-new profile object (with correct empty states for a musician who has
+  no gigs, reviews, ensembles, or media yet) and switches you into it. You can flip between
+  profiles anytime from the avatar strip at the top of Profile, or from Settings.
 - **Edit Profile** — "Edit profile" on the Profile screen opens a form (prefilled with the
-  active profile's current data) covering name, instrument, experience, location, credential,
-  genres, availability, rate, bio, and photo. Saving re-renders the profile from the same
-  `profiles` data model the wizard writes to.
+  active profile's current data) covering name, instrument(s) or event-organizer status,
+  experience, location, credential, genres, availability, rate, bio, and photo. Saving
+  re-renders the profile from the same `profiles` data model the wizard writes to.
 - **Find Friends** — a "+ Find" button in the Network screen's header opens a search screen
   where you can look someone up by name or phone number against a small mock directory.
   Tapping "Add" on a result shows a native-style confirm/deny alert ("Add so-and-so to your
@@ -86,7 +98,10 @@ rendered from a `profiles` array via `renderActiveProfile()`, so any profile (se
 wizard-created, or edited) reuses the exact same layout and empty states. Network data lives
 in a similar `CONNECTIONS` / `DIRECTORY` pair of arrays, and a generic `showAlert()` modal
 (styled like a native iOS alert) is reused for every confirm/deny and delete-confirmation
-moment in the app.
+moment in the app. The Discover feed is likewise data-driven from a `GIGS` array rendered
+by `renderDiscoverFeed()`, filtered live against the search bar; each profile carries its
+own `eventsOrganized` array (fed by the Organize Event form) rendered on the Profile screen
+and on the standalone Events Organized list/detail screens.
 
 ## A note on `index.html` vs `opus-prototype.html`
 
