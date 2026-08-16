@@ -53,8 +53,17 @@ No install required — it's a single static file.
 - **Gig Detail** — full posting info, "why this feels safe" network context, and an apply flow.
 - **Network** — your ensembles (Mezza Quartet, Grieg Duo — both tap through to full
   ensemble profiles with member rosters), mutual connections, and recommendations.
-- **Ensemble profiles** — bio, availability, media, and a clickable member list; each member
-  has their own bio page with a back arrow to the ensemble.
+- **Ensemble profiles** — bio, availability, media, and a clickable member list; each seeded
+  member has their own bio page with a back arrow to the ensemble.
+- **Create/Join Ensemble** — a "+ Create/Join" link on the Ensembles section (on both the
+  Network screen and the Profile screen) opens a full-screen popup with two tabs. **Create
+  New** builds a brand-new ensemble from a name, type (string quartet, duo, band, choir,
+  etc.), genres, and a bio — you're added as its first member. **Join Existing** searches a
+  small mock directory of other Pittsburgh-area ensembles (by name or type); tapping "Join"
+  shows a confirm alert, then adds you as a member. Either way, the ensemble immediately shows
+  up on both the Profile and Network screens and gets its own detail page (bio, media, member
+  list) — the two seeded ensembles (Mezza Quartet, Grieg Duo) keep their existing dedicated
+  pages, while every created/joined ensemble shares one data-driven detail screen.
 - **Messages** — a thread list and one live conversation thread with system status messages
   (applied, hired, payment pending).
 - **Profile** — your own bio, genres, an editable "Available For" chip list (weddings,
@@ -104,7 +113,12 @@ in a similar `CONNECTIONS` / `DIRECTORY` pair of arrays, and a generic `showAler
 moment in the app. The Discover feed is likewise data-driven from a `GIGS` array rendered
 by `renderDiscoverFeed()`, filtered live against the search bar; each profile carries its
 own `eventsOrganized` array (fed by the Organize Event form) rendered on the Profile screen
-and on the standalone Events Organized list/detail screens.
+and on the standalone Events Organized list/detail screens. Ensembles follow the same
+pattern: each profile's `ensembles` array feeds both the Network screen's cards
+(`renderNetworkEnsembles()`) and the Profile screen's list, a shared `ensembleCardHtml()`
+renders the card markup either place, and every created/joined ensemble (as opposed to the
+two seeded ones) opens the generic `screen-ensemble-detail` populated by
+`renderEnsembleDetail()`.
 
 ## A note on `index.html` vs `opus-prototype.html`
 

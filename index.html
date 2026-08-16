@@ -518,7 +518,7 @@
     white-space:nowrap;
   }
 
-  /* ===== Organize Event — full-screen popup modal ===== */
+  /* ===== Full-screen popup modals (Organize Event, Create/Join Ensemble) ===== */
   .modal-overlay{
     position:absolute; inset:0; background:rgba(20,22,30,.55); z-index:90;
     display:none; align-items:flex-end; justify-content:center;
@@ -536,6 +536,14 @@
   }
   .modal-sheet .wiz-content{ flex:1; overflow-y:auto; padding-bottom:24px; }
   .modal-sheet .wiz-footer{ position:relative; flex-shrink:0; bottom:auto; }
+
+  /* ===== Modal in-header tab switcher (Create New / Join Existing) ===== */
+  .modal-tabs{ display:flex; gap:6px; margin-top:10px; }
+  .modal-tab-btn{
+    font-family:'JetBrains Mono',monospace; font-size:11px; padding:7px 13px; border-radius:20px;
+    background:transparent; color:#C7CCDA; border:1px solid rgba(247,243,234,.22); cursor:pointer;
+  }
+  .modal-tab-btn.active{ background:rgba(224,185,117,.14); color:var(--brass-light); border-color:rgba(224,185,117,.3); }
 
   /* ===== Organizer toggle (wizard + edit profile) ===== */
   .organizer-toggle{
@@ -631,6 +639,88 @@
     </div>
   </div>
 
+  <!-- ===================== CREATE/JOIN ENSEMBLE — full-screen popup modal ===================== -->
+  <div class="modal-overlay" id="ensembleModal" onclick="closeEnsembleModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="header-block">
+        <div class="statusbar">
+          <span>9:41</span>
+          <div class="signal">
+            <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+            <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+          </div>
+        </div>
+        <div class="topbar">
+          <button class="modal-close" onclick="closeEnsembleModal()" aria-label="Close">&#10005;</button>
+          <div class="brand" style="margin-top:10px; font-size:19px;">Ensembles</div>
+          <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="ensTabCreateBtn" onclick="switchEnsembleTab('create')">Create New</button>
+            <button class="modal-tab-btn" id="ensTabJoinBtn" onclick="switchEnsembleTab('join')">Join Existing</button>
+          </div>
+        </div>
+      </div>
+      <div class="content wiz-content">
+        <div id="ensCreatePane">
+          <div class="field-label" style="margin-top:6px;">Ensemble name</div>
+          <input class="field-input" type="text" id="ensName" placeholder="e.g. Riverside String Trio">
+
+          <div class="field-label">Type</div>
+          <div class="chip-select" id="ensTypeGrid"></div>
+
+          <div class="field-label">Genres</div>
+          <div class="chip-select" id="ensGenreGrid"></div>
+
+          <div class="field-label">Bio</div>
+          <textarea class="field-textarea" id="ensBio" maxlength="400" placeholder="Tell organizers what makes this ensemble unique..."></textarea>
+        </div>
+        <div id="ensJoinPane" style="display:none;">
+          <input class="field-input" type="text" id="ensembleSearch" placeholder="Search by ensemble name or type..." oninput="renderEnsembleDirectory()" style="margin-top:6px;">
+          <div id="ensembleDirectoryResults" style="margin-top:16px;"></div>
+        </div>
+      </div>
+      <div class="wiz-footer" id="ensCreateFooter">
+        <button class="btn block" onclick="submitCreateEnsemble()">Create Ensemble</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: ENSEMBLE DETAIL (dynamic — created/joined ensembles) ===================== -->
+  <div class="screen" id="screen-ensemble-detail">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="back-row" onclick="goBack()">&larr; back</div>
+      </div>
+    </div>
+    <div class="profile-hero" style="margin-top:-1px;">
+      <div class="profile-photo" id="ensembleDetailPhoto" style="border-radius:20px;">EN</div>
+      <div class="profile-name" id="ensembleDetailName">Ensemble</div>
+      <div class="profile-tagline" id="ensembleDetailTagline"></div>
+      <div class="badge-row" id="ensembleDetailBadges"></div>
+    </div>
+    <div class="content" style="padding-top:0;">
+      <div class="section-title">Biography</div>
+      <p class="bio" id="ensembleDetailBio"></p>
+
+      <div class="section-title">Media</div>
+      <div id="ensembleDetailMedia"></div>
+
+      <div class="section-title">Members</div>
+      <div id="ensembleDetailMembers"></div>
+
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn" id="ensembleDetailBookBtn">Book</button>
+        <button class="btn ghost" onclick="openSheet()">Share</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===================== SCREEN: GIG DETAIL ===================== -->
   <div class="screen" id="screen-gigdetail">
     <div class="header-block">
@@ -711,30 +801,8 @@
       </div>
     </div>
     <div class="content">
-      <div class="section-title">Ensembles you're in</div>
-      <div class="card" onclick="showScreen('screen-ensemble-mezza')" style="cursor:pointer;">
-        <div class="eyebrow">String Quartet</div>
-        <h3>Mezza Quartet</h3>
-        <div class="meta">4 members &middot; Pittsburgh PA &middot; 64 gigs completed</div>
-        <div class="ensemble-members">
-          <div class="avatar" style="background:var(--brass)">You</div>
-          <div class="avatar" style="background:var(--sage)">JL</div>
-          <div class="avatar" style="background:var(--crimson)">NG</div>
-          <div class="avatar" style="background:var(--ink-3)">ES</div>
-        </div>
-        <div class="tagrow"><div class="tag">Classical</div><div class="tag">Weddings</div><div class="tag">Chamber recitals</div></div>
-      </div>
-
-      <div class="card" onclick="showScreen('screen-ensemble-grieg')" style="cursor:pointer;">
-        <div class="eyebrow">Violin / Piano Duo</div>
-        <h3>Grieg Duo</h3>
-        <div class="meta">2 members &middot; Pittsburgh PA &middot; 21 gigs completed</div>
-        <div class="ensemble-members">
-          <div class="avatar" style="background:var(--brass)">You</div>
-          <div class="avatar" style="background:var(--ink-3)">SC</div>
-        </div>
-        <div class="tagrow"><div class="tag">Romantic era</div><div class="tag">Recitals</div><div class="tag">Fundraisers</div></div>
-      </div>
+      <div class="section-title">Ensembles you're in<span class="see clickable mini-add" onclick="openEnsembleModal()">+ Create/Join</span></div>
+      <div id="networkEnsembles"></div>
 
       <div class="section-title">Mutual connections <span class="see clickable" id="mutualCountLabel" onclick="showScreen('screen-allconnections')">24 total</span></div>
       <div class="net-wrap" id="mutualPreviewWrap"></div>
@@ -1748,8 +1816,30 @@
       availableHidden: ['Religious Services', 'Session Work', 'Teaching'],
       media: ['▶ Grieg Sonata No. 3, live', '▶ Mezza Quartet reel', '▶ Solo recital, CMU'],
       ensembles: [
-        { initials:'MQ', color:'var(--brass)', name:'Mezza Quartet', sub:'String Quartet &middot; 4 members', onclick:"showScreen('screen-ensemble-mezza')" },
-        { initials:'GD', color:'var(--sage)', name:'Grieg Duo', sub:'Violin / Piano Duo &middot; 2 members', onclick:"showScreen('screen-ensemble-grieg')" }
+        {
+          id:'mezza', initials:'MQ', color:'var(--brass)', name:'Mezza Quartet',
+          type:'String Quartet', location:'Pittsburgh, PA', gigsCompleted:64,
+          genres:['Classical','Weddings','Chamber recitals'],
+          members:[
+            { name:'You', role:'Violin I', initials:'You', color:'var(--brass)', isYou:true },
+            { name:'Josh Lee', role:'Violin II', initials:'JL', color:'var(--sage)' },
+            { name:'Nathan Gaynor', role:'Viola', initials:'NG', color:'var(--crimson)' },
+            { name:'Elly Schade', role:'Cello', initials:'ES', color:'var(--ink-3)' }
+          ],
+          sub:'String Quartet &middot; 4 members', custom:false,
+          onclick:"showScreen('screen-ensemble-mezza')"
+        },
+        {
+          id:'grieg', initials:'GD', color:'var(--sage)', name:'Grieg Duo',
+          type:'Violin / Piano Duo', location:'Pittsburgh, PA', gigsCompleted:21,
+          genres:['Romantic era','Recitals','Fundraisers'],
+          members:[
+            { name:'You', role:'Violin', initials:'You', color:'var(--brass)', isYou:true },
+            { name:'Spencer Cha', role:'Piano', initials:'SC', color:'var(--ink-3)' }
+          ],
+          sub:'Violin / Piano Duo &middot; 2 members', custom:false,
+          onclick:"showScreen('screen-ensemble-grieg')"
+        }
       ],
       reviews: [
         { text:'"Punctual, beautifully prepared, and easy to coordinate with day-of."', who:'— Elena Petrova, Wedding Planner' },
@@ -1801,6 +1891,7 @@
   function switchProfile(i){
     currentProfileIndex = i;
     renderActiveProfile();
+    renderNetworkEnsembles();
     showScreen('screen-profile');
   }
 
@@ -1862,13 +1953,13 @@
       mediaHtml += '<div class="empty-note">No media yet — add a recording or reel to help organizers hear you play.</div>';
     }
 
-    var ensemblesHtml;
+    var ensemblesHtml = '<div class="section-title" style="margin-top:16px;">Ensembles<span class="see clickable mini-add" onclick="openEnsembleModal()">+ Create/Join</span></div>';
     if(p.ensembles.length){
-      ensemblesHtml = '<div class="section-title" style="margin-top:16px;">Ensembles</div>' + p.ensembles.map(function(e){
+      ensemblesHtml += p.ensembles.map(function(e){
         return '<div class="list-row" onclick="'+e.onclick+'"><div class="avatar" style="background:'+e.color+'; margin-left:0; width:38px; height:38px; font-size:12px;">'+e.initials+'</div><div class="info"><b>'+escapeHtml(e.name)+'</b><span>'+e.sub+'</span></div><div class="chev">&rsaquo;</div></div>';
       }).join('');
     } else {
-      ensemblesHtml = '<div class="section-title" style="margin-top:16px;">Ensembles</div><div class="empty-note">You haven\'t joined or created an ensemble on this profile yet.</div>';
+      ensemblesHtml += '<div class="empty-note">You haven\'t joined or created an ensemble on this profile yet.</div>';
     }
 
     var eventsList = p.eventsOrganized || [];
@@ -2583,6 +2674,275 @@
   }
 
   /* =====================================================================
+     ENSEMBLES — create new, join existing, shared card + detail rendering
+  ===================================================================== */
+  var ENSEMBLE_TYPES = ['String Quartet','Duo','Trio','Chamber Group','Band','Choir','Orchestra','Other'];
+  var ensembleCreateData = { type:'', genres:[] };
+  var currentEnsembleId = null;
+
+  var ENSEMBLE_DIRECTORY = [
+    {
+      id:'cmu-wind', name:'CMU Wind Ensemble', type:'Concert Band', location:'Pittsburgh, PA',
+      genres:['Concert Band','Contemporary','Film Scores'],
+      bio:'A 40-piece concert band drawing from Carnegie Mellon students and alumni, performing a mix of concert band standards and contemporary film scores each semester.',
+      initials:'CW', color:'var(--sage)',
+      members:[ { name:'Maya Chen', role:'Flute', initials:'MC', color:'var(--sage)' } ]
+    },
+    {
+      id:'steel-brass', name:'Steel City Brass Quintet', type:'Brass Quintet', location:'Pittsburgh, PA',
+      genres:['Brass','Ceremonial','Holiday'],
+      bio:'A five-piece brass ensemble specializing in ceremonial music, holiday concerts, and civic events across the greater Pittsburgh area.',
+      initials:'SB', color:'var(--crimson)',
+      members:[ { name:'Owen Vance', role:'Trombone', initials:'OV', color:'var(--crimson)' } ]
+    },
+    {
+      id:'pgh-chamber', name:'Pittsburgh Chamber Players', type:'Chamber Group', location:'Pittsburgh, PA',
+      genres:['Classical','Contemporary','Recitals'],
+      bio:'A rotating chamber collective of Pittsburgh-area freelancers, presenting a subscription recital series each season at small venues around the city.',
+      initials:'PC', color:'var(--brass)',
+      members:[ { name:'Delphine Roy', role:'Cello', initials:'DR', color:'var(--sage)' } ]
+    },
+    {
+      id:'northside-jazz', name:'Northside Jazz Collective', type:'Jazz Combo', location:'Pittsburgh, PA',
+      genres:['Jazz','Standards','Improv'],
+      bio:'A rotating-cast jazz combo playing weekly sets at Northside venues, open to sit-ins from the local scene.',
+      initials:'NJ', color:'var(--ink-3)',
+      members:[ { name:'Noah Bennett', role:'Guitar', initials:'NB', color:'var(--ink-3)' } ]
+    }
+  ];
+
+  function buildEnsembleGrids(){
+    document.getElementById('ensTypeGrid').innerHTML = ENSEMBLE_TYPES.map(function(t){
+      return '<div class="chip-pick" onclick="pickEnsembleType(this,\''+t+'\')">'+t+'</div>';
+    }).join('');
+    document.getElementById('ensGenreGrid').innerHTML = GENRES.map(function(g){
+      return '<div class="chip-pick" onclick="toggleMulti(this, ensembleCreateData.genres, \''+g+'\')">'+g+'</div>';
+    }).join('');
+  }
+
+  function pickEnsembleType(el, type){
+    document.querySelectorAll('#ensTypeGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
+    el.classList.add('on');
+    ensembleCreateData.type = type;
+  }
+
+  function resetEnsembleForm(){
+    document.getElementById('ensName').value = '';
+    document.getElementById('ensBio').value = '';
+    document.getElementById('ensembleSearch').value = '';
+    ensembleCreateData = { type:'', genres:[] };
+    document.querySelectorAll('#ensTypeGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
+    document.querySelectorAll('#ensGenreGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
+    switchEnsembleTab('create');
+  }
+
+  function openEnsembleModal(){
+    resetEnsembleForm();
+    renderEnsembleDirectory();
+    document.getElementById('ensembleModal').classList.add('open');
+  }
+
+  function closeEnsembleModal(){
+    document.getElementById('ensembleModal').classList.remove('open');
+  }
+
+  function switchEnsembleTab(tab){
+    var createPane = document.getElementById('ensCreatePane');
+    var joinPane = document.getElementById('ensJoinPane');
+    var footer = document.getElementById('ensCreateFooter');
+    var createBtn = document.getElementById('ensTabCreateBtn');
+    var joinBtn = document.getElementById('ensTabJoinBtn');
+    if(tab === 'join'){
+      createPane.style.display = 'none';
+      joinPane.style.display = 'block';
+      footer.style.display = 'none';
+      createBtn.classList.remove('active');
+      joinBtn.classList.add('active');
+    } else {
+      createPane.style.display = 'block';
+      joinPane.style.display = 'none';
+      footer.style.display = '';
+      createBtn.classList.add('active');
+      joinBtn.classList.remove('active');
+    }
+  }
+
+  function ensembleCardHtml(e){
+    var membersHtml = (e.members || []).slice(0, 4).map(function(m){
+      return '<div class="avatar" style="background:'+m.color+'">'+(m.isYou ? 'You' : escapeHtml(m.initials))+'</div>';
+    }).join('');
+    var tagsHtml = (e.genres || []).map(function(g){ return '<div class="tag">'+escapeHtml(g)+'</div>'; }).join('');
+    var memberCount = (e.members || []).length;
+    var metaParts = [memberCount + ' member' + (memberCount === 1 ? '' : 's')];
+    if(e.location) metaParts.push(e.location);
+    if(e.gigsCompleted) metaParts.push(e.gigsCompleted + ' gigs completed');
+    return '<div class="card" onclick="'+e.onclick+'" style="cursor:pointer;">'
+      + '<div class="eyebrow">'+escapeHtml(e.type || 'Ensemble')+'</div>'
+      + '<h3>'+escapeHtml(e.name)+'</h3>'
+      + '<div class="meta">'+metaParts.map(escapeHtml).join(' &middot; ')+'</div>'
+      + '<div class="ensemble-members">'+membersHtml+'</div>'
+      + '<div class="tagrow">'+tagsHtml+'</div>'
+      + '</div>';
+  }
+
+  function renderNetworkEnsembles(){
+    var wrap = document.getElementById('networkEnsembles');
+    if(!wrap) return;
+    var p = profiles[currentProfileIndex];
+    if(p.ensembles.length){
+      wrap.innerHTML = p.ensembles.map(ensembleCardHtml).join('');
+    } else {
+      wrap.innerHTML = '<div class="empty-note">You haven\'t joined or created an ensemble on this profile yet.</div>';
+    }
+  }
+
+  function submitCreateEnsemble(){
+    var name = document.getElementById('ensName').value.trim();
+    if(!name){
+      showAlert({
+        title:'Name required',
+        message:'Give your ensemble a name before creating it.',
+        confirmText:'Got it', singleButton:true
+      });
+      return;
+    }
+    var p = profiles[currentProfileIndex];
+    var id = 'custom-' + Date.now();
+    var initials = name.trim().split(/\s+/).filter(Boolean).map(function(w){ return w[0]; }).join('').substring(0, 2).toUpperCase() || 'EN';
+    var colors = ['var(--brass)', 'var(--sage)', 'var(--crimson)', 'var(--ink-3)'];
+    var color = colors[p.ensembles.length % colors.length];
+    var type = ensembleCreateData.type || 'Ensemble';
+    var ensemble = {
+      id: id, initials: initials, color: color, name: name,
+      type: type, location: p.location || '', gigsCompleted: 0,
+      genres: ensembleCreateData.genres.slice(),
+      bio: document.getElementById('ensBio').value.trim() || 'No bio added yet.',
+      media: [],
+      members: [{ name:'You', role: primaryRoleLabel(p), initials:'You', color: color, isYou:true }],
+      custom: true,
+      onclick: "openEnsembleDetail('" + id + "')"
+    };
+    ensemble.sub = type + ' &middot; 1 member';
+    p.ensembles.push(ensemble);
+    renderActiveProfile();
+    renderNetworkEnsembles();
+    closeEnsembleModal();
+    showAlert({
+      title:'Ensemble created',
+      message:'"'+name+'" has been added to your ensembles.',
+      confirmText:'Nice', singleButton:true
+    });
+  }
+
+  function renderEnsembleDirectory(){
+    var q = (document.getElementById('ensembleSearch').value || '').trim().toLowerCase();
+    var p = profiles[currentProfileIndex];
+    var joinedIds = p.ensembles.map(function(e){ return e.id; });
+    var results = ENSEMBLE_DIRECTORY.filter(function(e){
+      if(!q) return true;
+      var hay = (e.name+' '+e.type+' '+e.genres.join(' ')).toLowerCase();
+      return hay.indexOf(q) > -1;
+    });
+    var wrap = document.getElementById('ensembleDirectoryResults');
+    if(!results.length){
+      wrap.innerHTML = '<div class="empty-note">No ensembles match your search.</div>';
+      return;
+    }
+    wrap.innerHTML = results.map(function(e){
+      var joined = joinedIds.indexOf(e.id) > -1;
+      return '<div class="list-row" style="cursor:default;">'
+        + '<div class="avatar" style="background:'+e.color+'; margin-left:0; width:38px; height:38px; font-size:12px;">'+e.initials+'</div>'
+        + '<div class="info"><b>'+escapeHtml(e.name)+'</b><span>'+escapeHtml(e.type)+' &middot; '+escapeHtml(e.location)+'</span></div>'
+        + (joined
+            ? '<span class="switch-pill" style="cursor:default;">Joined</span>'
+            : '<button class="add-btn" onclick="confirmJoinEnsemble(\''+e.id+'\')">Join</button>')
+        + '</div>';
+    }).join('');
+  }
+
+  function confirmJoinEnsemble(id){
+    var e = ENSEMBLE_DIRECTORY.filter(function(x){ return x.id === id; })[0];
+    if(!e) return;
+    showAlert({
+      title:'Join '+e.name+'?',
+      message:'You\'ll be added as a member of '+e.name+', and it will appear on your profile and network.',
+      confirmText:'Join', cancelText:'Cancel',
+      onConfirm:function(){ joinEnsemble(e); }
+    });
+  }
+
+  function joinEnsemble(e){
+    var p = profiles[currentProfileIndex];
+    var members = e.members.slice();
+    members.unshift({ name:'You', role: primaryRoleLabel(p), initials:'You', color:e.color, isYou:true });
+    var ensemble = {
+      id: e.id, initials: e.initials, color: e.color, name: e.name,
+      type: e.type, location: e.location, gigsCompleted: 0,
+      genres: e.genres.slice(), bio: e.bio, media: [],
+      members: members,
+      custom: true,
+      onclick: "openEnsembleDetail('" + e.id + "')"
+    };
+    ensemble.sub = e.type + ' &middot; ' + members.length + ' members';
+    p.ensembles.push(ensemble);
+    renderActiveProfile();
+    renderNetworkEnsembles();
+    renderEnsembleDirectory();
+    showAlert({
+      title:'Joined',
+      message:'You\'re now a member of '+e.name+'.',
+      confirmText:'Nice', singleButton:true
+    });
+  }
+
+  function openEnsembleDetail(id){
+    currentEnsembleId = id;
+    renderEnsembleDetail();
+    showScreen('screen-ensemble-detail');
+  }
+
+  function renderEnsembleDetail(){
+    var p = profiles[currentProfileIndex];
+    var e = p.ensembles.filter(function(x){ return x.id === currentEnsembleId; })[0];
+    if(!e) return;
+
+    var photo = document.getElementById('ensembleDetailPhoto');
+    photo.textContent = e.initials;
+    photo.style.background = e.color;
+
+    document.getElementById('ensembleDetailName').textContent = e.name;
+
+    var memberCount = (e.members || []).length;
+    var taglineParts = [e.type || 'Ensemble'];
+    if(e.location) taglineParts.push(e.location);
+    taglineParts.push(memberCount + ' member' + (memberCount === 1 ? '' : 's'));
+    document.getElementById('ensembleDetailTagline').textContent = taglineParts.join(' · ');
+
+    document.getElementById('ensembleDetailBadges').innerHTML = (e.genres || []).map(function(g){
+      return '<div class="badge">'+escapeHtml(g)+'</div>';
+    }).join('');
+
+    document.getElementById('ensembleDetailBio').textContent = e.bio || 'No bio added yet.';
+
+    var media = e.media || [];
+    document.getElementById('ensembleDetailMedia').innerHTML = media.length
+      ? '<div class="media-strip">' + media.map(function(m){ return '<div class="media-thumb">'+escapeHtml(m)+'</div>'; }).join('') + '</div>'
+      : '<div class="empty-note">No media yet for this ensemble.</div>';
+
+    document.getElementById('ensembleDetailMembers').innerHTML = (e.members || []).map(function(m){
+      var isYou = !!m.isYou;
+      var clickAttr = isYou ? ' onclick="showScreen(\'screen-profile\')" style="cursor:pointer;"' : '';
+      return '<div class="list-row"'+clickAttr+'>'
+        + '<div class="avatar" style="background:'+m.color+'; margin-left:0; width:38px; height:38px; font-size:12px;">'+(isYou ? 'You' : escapeHtml(m.initials))+'</div>'
+        + '<div class="info"><b>'+escapeHtml(isYou ? p.name : m.name)+'</b><span>'+escapeHtml(m.role || '')+'</span></div>'
+        + (isYou ? '<div class="chev">&rsaquo;</div>' : '')
+        + '</div>';
+    }).join('');
+
+    document.getElementById('ensembleDetailBookBtn').textContent = 'Book ' + e.name;
+  }
+
+  /* =====================================================================
      NETWORK — connections, find-friends directory, recommendations
   ===================================================================== */
   var CONNECTIONS = [
@@ -2775,8 +3135,10 @@
   buildWizardGrids();
   buildEditGrids();
   buildOrganizeGrids();
+  buildEnsembleGrids();
   renderDiscoverFeed();
   renderActiveProfile();
+  renderNetworkEnsembles();
   renderMutualPreview();
   renderMutualCount();
   renderAllConnections();
