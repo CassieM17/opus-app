@@ -58,10 +58,16 @@ No install required — it's a single static file.
 - **Create/Join Ensemble** — a "+ Create/Join" link on the Ensembles section (on both the
   Network screen and the Profile screen) opens a full-screen popup with two tabs. **Create
   New** builds a brand-new ensemble from a name, type (string quartet, duo, band, choir,
-  etc.), genres, and a bio — you're added as its first member. **Join Existing** searches a
-  small mock directory of other Pittsburgh-area ensembles (by name or type); tapping "Join"
-  shows a confirm alert, then adds you as a member. Either way, the ensemble immediately shows
-  up on both the Profile and Network screens and gets its own detail page (bio, media, member
+  etc.), genres, and a bio — you're added as its first member, no approval needed since you're
+  the founder. **Join Existing** searches a small mock directory of other Pittsburgh-area
+  ensembles (by name or type). Tapping "Join" doesn't add you right away — it sends a request
+  that every current member of that ensemble has to confirm. A live pill on the result row
+  ("1/4 confirmed," "2/4 confirmed," …) ticks up as each member responds, simulated with
+  staggered delays so it reads like real people weighing in one at a time. You're only added
+  once every member has confirmed; if even one member declines, the request is denied outright
+  (regardless of how many already said yes) and you're notified who declined — the pill resets
+  and you're free to try again. Either way, once you're in, the ensemble immediately shows up
+  on both the Profile and Network screens and gets its own detail page (bio, media, member
   list) — the two seeded ensembles (Mezza Quartet, Grieg Duo) keep their existing dedicated
   pages, while every created/joined ensemble shares one data-driven detail screen.
 - **Messages** — a thread list and one live conversation thread with system status messages

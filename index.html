@@ -348,6 +348,9 @@
     font-family:'JetBrains Mono',monospace; font-size:9.5px; padding:4px 9px; border-radius:20px;
     background:var(--parchment-2); color:var(--text-dark); border:1px solid var(--line); flex-shrink:0; cursor:pointer;
   }
+  .switch-pill.pending{
+    background:rgba(192,138,62,.12); color:var(--brass); border-color:rgba(192,138,62,.35); white-space:nowrap;
+  }
   .add-profile-row{
     display:flex; align-items:center; gap:12px; padding:13px; margin-top:2px; cursor:pointer;
     border:1.5px dashed var(--brass); border-radius:14px; background:rgba(192,138,62,.06);
@@ -2686,30 +2689,50 @@
       genres:['Concert Band','Contemporary','Film Scores'],
       bio:'A 40-piece concert band drawing from Carnegie Mellon students and alumni, performing a mix of concert band standards and contemporary film scores each semester.',
       initials:'CW', color:'var(--sage)',
-      members:[ { name:'Maya Chen', role:'Flute', initials:'MC', color:'var(--sage)' } ]
+      members:[
+        { name:'Maya Chen', role:'Flute', initials:'MC', color:'var(--sage)' },
+        { name:'Derek Osei', role:'Clarinet', initials:'DO', color:'var(--crimson)' },
+        { name:'Lily Fenwick', role:'Trumpet', initials:'LF', color:'var(--brass)' },
+        { name:'Marcus Webb', role:'Percussion', initials:'MW', color:'var(--ink-3)' }
+      ]
     },
     {
       id:'steel-brass', name:'Steel City Brass Quintet', type:'Brass Quintet', location:'Pittsburgh, PA',
       genres:['Brass','Ceremonial','Holiday'],
       bio:'A five-piece brass ensemble specializing in ceremonial music, holiday concerts, and civic events across the greater Pittsburgh area.',
       initials:'SB', color:'var(--crimson)',
-      members:[ { name:'Owen Vance', role:'Trombone', initials:'OV', color:'var(--crimson)' } ]
+      members:[
+        { name:'Owen Vance', role:'Trombone', initials:'OV', color:'var(--crimson)' },
+        { name:'Reggie Coyle', role:'Trumpet', initials:'RC', color:'var(--sage)' },
+        { name:'Ana Petrenko', role:'French Horn', initials:'AP', color:'var(--brass)' },
+        { name:'Felix Duarte', role:'Tuba', initials:'FD', color:'var(--ink-3)' }
+      ]
     },
     {
       id:'pgh-chamber', name:'Pittsburgh Chamber Players', type:'Chamber Group', location:'Pittsburgh, PA',
       genres:['Classical','Contemporary','Recitals'],
       bio:'A rotating chamber collective of Pittsburgh-area freelancers, presenting a subscription recital series each season at small venues around the city.',
       initials:'PC', color:'var(--brass)',
-      members:[ { name:'Delphine Roy', role:'Cello', initials:'DR', color:'var(--sage)' } ]
+      members:[
+        { name:'Delphine Roy', role:'Cello', initials:'DR', color:'var(--sage)' },
+        { name:'Nina Vogel', role:'Piano', initials:'NV', color:'var(--crimson)' },
+        { name:'Bianca Ortiz', role:'Voice', initials:'BO', color:'var(--brass)' }
+      ]
     },
     {
       id:'northside-jazz', name:'Northside Jazz Collective', type:'Jazz Combo', location:'Pittsburgh, PA',
       genres:['Jazz','Standards','Improv'],
       bio:'A rotating-cast jazz combo playing weekly sets at Northside venues, open to sit-ins from the local scene.',
       initials:'NJ', color:'var(--ink-3)',
-      members:[ { name:'Noah Bennett', role:'Guitar', initials:'NB', color:'var(--ink-3)' } ]
+      members:[
+        { name:'Noah Bennett', role:'Guitar', initials:'NB', color:'var(--ink-3)' },
+        { name:'Jules Ferreira', role:'Bass', initials:'JF', color:'var(--sage)' },
+        { name:'Sam Whitfield', role:'Trumpet', initials:'SW', color:'var(--crimson)' }
+      ]
     }
   ];
+
+  var pendingJoinRequests = {};
 
   function buildEnsembleGrids(){
     document.getElementById('ensTypeGrid').innerHTML = ENSEMBLE_TYPES.map(function(t){
@@ -2850,25 +2873,77 @@
     }
     wrap.innerHTML = results.map(function(e){
       var joined = joinedIds.indexOf(e.id) > -1;
+      var pending = pendingJoinRequests[e.id];
+      var actionHtml;
+      if(joined){
+        actionHtml = '<span class="switch-pill" style="cursor:default;">Joined</span>';
+      } else if(pending){
+        actionHtml = '<span class="switch-pill pending" style="cursor:default;">'+pending.confirmed+'/'+pending.total+' confirmed</span>';
+      } else {
+        actionHtml = '<button class="add-btn" onclick="confirmJoinEnsemble(\''+e.id+'\')">Join</button>';
+      }
       return '<div class="list-row" style="cursor:default;">'
         + '<div class="avatar" style="background:'+e.color+'; margin-left:0; width:38px; height:38px; font-size:12px;">'+e.initials+'</div>'
         + '<div class="info"><b>'+escapeHtml(e.name)+'</b><span>'+escapeHtml(e.type)+' &middot; '+escapeHtml(e.location)+'</span></div>'
-        + (joined
-            ? '<span class="switch-pill" style="cursor:default;">Joined</span>'
-            : '<button class="add-btn" onclick="confirmJoinEnsemble(\''+e.id+'\')">Join</button>')
+        + actionHtml
         + '</div>';
     }).join('');
   }
 
   function confirmJoinEnsemble(id){
     var e = ENSEMBLE_DIRECTORY.filter(function(x){ return x.id === id; })[0];
-    if(!e) return;
+    if(!e || pendingJoinRequests[e.id]) return;
+    var total = e.members.length;
     showAlert({
-      title:'Join '+e.name+'?',
-      message:'You\'ll be added as a member of '+e.name+', and it will appear on your profile and network.',
-      confirmText:'Join', cancelText:'Cancel',
-      onConfirm:function(){ joinEnsemble(e); }
+      title:'Request to join '+e.name+'?',
+      message:'All '+total+' current member'+(total===1?'':'s')+' will be notified and need to confirm before you\'re added.',
+      confirmText:'Send Request', cancelText:'Cancel',
+      onConfirm:function(){ startJoinRequest(e); }
     });
+  }
+
+  function startJoinRequest(e){
+    pendingJoinRequests[e.id] = { total:e.members.length, confirmed:0, settled:false };
+    renderEnsembleDirectory();
+
+    // Members "respond" one at a time, in a shuffled order, each independently
+    // approving or denying — a single denial blocks the join even if others
+    // already confirmed.
+    var order = e.members.slice().sort(function(){ return Math.random() - 0.5; });
+    var delay = 0;
+    order.forEach(function(member){
+      delay += 650 + Math.floor(Math.random() * 550);
+      (function(waitFor){
+        setTimeout(function(){ processJoinResponse(e, member); }, waitFor);
+      })(delay);
+    });
+  }
+
+  function processJoinResponse(e, member){
+    var req = pendingJoinRequests[e.id];
+    if(!req || req.settled) return;
+
+    var approves = Math.random() < 0.8;
+    if(!approves){
+      req.settled = true;
+      delete pendingJoinRequests[e.id];
+      renderEnsembleDirectory();
+      showAlert({
+        title:'Request denied',
+        message: member.name + ' declined your request to join ' + e.name + '. You have not been added to the ensemble.',
+        confirmText:'OK', singleButton:true
+      });
+      return;
+    }
+
+    req.confirmed++;
+    if(req.confirmed >= req.total){
+      req.settled = true;
+      delete pendingJoinRequests[e.id];
+      joinEnsemble(e);
+    } else {
+      renderEnsembleDirectory();
+    }
   }
 
   function joinEnsemble(e){
@@ -2889,8 +2964,8 @@
     renderNetworkEnsembles();
     renderEnsembleDirectory();
     showAlert({
-      title:'Joined',
-      message:'You\'re now a member of '+e.name+'.',
+      title:'Request approved',
+      message:'All '+e.members.length+' members confirmed — you\'re now part of '+e.name+'.',
       confirmText:'Nice', singleButton:true
     });
   }
