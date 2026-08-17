@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Opus — App Mockup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
     --text-muted:#8A8578;
     --line:#E2DAC5;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
   body{
     background: radial-gradient(ellipse at top, #2b3040, #14161d 70%);
     font-family:'Inter',sans-serif;
@@ -486,12 +486,7 @@
   }
   .row-delete-btn:hover{ color:var(--crimson); border-color:var(--crimson); }
 
-  /* ===== Network: find-friends button, connection rows, recommend icon ===== */
-  .find-btn{
-    position:absolute; top:8px; right:20px; display:flex; align-items:center; gap:5px;
-    font-family:'JetBrains Mono',monospace; font-size:11px; padding:7px 12px; border-radius:20px;
-    background:rgba(224,185,117,.14); color:var(--brass-light); border:1px solid rgba(224,185,117,.3); cursor:pointer;
-  }
+  /* ===== Network: connection rows, recommend icon ===== */
   .net-node .info{ flex:1; }
   .recommend-btn{
     width:30px; height:30px; border-radius:8px; border:1px solid var(--line); background:#fff;
@@ -561,6 +556,37 @@
   .organizer-toggle .check svg{ opacity:0; }
   .organizer-toggle.on .check svg{ opacity:1; }
   .disabled-grid{ opacity:.4; pointer-events:none; }
+
+  /* =====================================================================
+     MOBILE — when this file is opened on an actual phone (not viewed as a
+     desktop mockup), drop the decorative frame/bezel/shadow entirely and
+     let the app fill the real screen edge-to-edge, using safe-area insets
+     so content clears the notch and home indicator like a real app would.
+  ===================================================================== */
+  @media (max-width: 520px){
+    body{
+      padding:0; margin:0; background:var(--ink);
+      align-items:stretch; justify-content:stretch;
+      min-height:100vh; min-height:100dvh;
+    }
+    .studio-label{ display:none; }
+    .phone{
+      width:100vw; height:100vh; height:100dvh;
+      border-radius:0; border:none; box-shadow:none; transform:none;
+    }
+    .dynamic-island{ display:none; }
+    .statusbar{
+      height:calc(59px + env(safe-area-inset-top, 0px));
+      padding-top:env(safe-area-inset-top, 0px);
+    }
+    .navbar{
+      height:calc(82px + env(safe-area-inset-bottom, 0px));
+      padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+    .wiz-footer{
+      padding-bottom:calc(26px + env(safe-area-inset-bottom, 0px));
+    }
+  }
 </style>
 </head>
 <body>
@@ -777,7 +803,7 @@
         </div>
       </div>
 
-      <button class="btn block crimson" onclick="showScreen('screen-messages-thread')">Apply as Mezza Quartet</button>
+      <button class="btn block crimson" onclick="applyToGig()">Apply as Mezza Quartet</button>
       <div style="height:10px"></div>
       <button class="btn block ghost">Save for later</button>
     </div>
@@ -795,51 +821,20 @@
       </div>
       <div class="topbar">
         <div class="brand"><svg class="clef-icon" viewBox="0 0 28 44" width="15" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 4 C10 4 7 10 11 15 C15 20 21 17 20 11 C19 7 14 7 14 11 C14 14 17 15 18 13"/><path d="M18 13 C16 20 15 28 15 35"/><path d="M15 35 C15 41 9 42 7 37 C5 33 10 30 13 33"/></svg>Op<span class="mark">u</span>s</div>
-        <div class="sub">your network</div>
-        <button class="find-btn" onclick="openFindFriends()" aria-label="Find friends">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
-          Find
-        </button>
+        <div class="sub">my network</div>
       </div>
     </div>
     <div class="content">
-      <div class="section-title">Ensembles you're in<span class="see clickable mini-add" onclick="openEnsembleModal()">+ Create/Join</span></div>
-      <div id="networkEnsembles"></div>
+      <input class="field-input" type="text" id="networkSearch" placeholder="Search people by name or phone number..." oninput="renderNetworkSearch()" style="margin-bottom:14px;">
+      <div id="networkSearchResults"></div>
 
-      <div class="section-title">Mutual connections <span class="see clickable" id="mutualCountLabel" onclick="showScreen('screen-allconnections')">24 total</span></div>
-      <div class="net-wrap" id="mutualPreviewWrap"></div>
+      <div id="networkMainSections">
+        <div class="section-title">Connections <span class="see clickable" id="mutualCountLabel" onclick="showScreen('screen-allconnections')">24 total</span></div>
+        <div class="net-wrap" id="mutualPreviewWrap"></div>
 
-      <div class="section-title">Recommendations received</div>
-      <div class="review">
-        <p>"Punctual, beautifully prepared, and easy to coordinate with day-of. I'd book again without hesitation."</p>
-        <div class="who">— Elena Petrova, Wedding Planner &middot; Jun 2026</div>
+        <div class="section-title" style="margin-top:16px;">Ensembles<span class="see clickable mini-add" onclick="openEnsembleModal()">+ Create/Join</span></div>
+        <div id="networkEnsembles"></div>
       </div>
-      <div class="review">
-        <p>"One of the most disciplined chamber players I've taught. Handles a last-minute repertoire change with total ease."</p>
-        <div class="who">— Prof. Miriam Osei, Carnegie Mellon School of Music &middot; Mar 2026</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== SCREEN: FIND FRIENDS ===================== -->
-  <div class="screen" id="screen-findfriends">
-    <div class="header-block">
-      <div class="statusbar">
-        <span>9:41</span>
-        <div class="signal">
-          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
-          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
-        </div>
-      </div>
-      <div class="topbar">
-        <div class="back-row" onclick="showScreen('screen-network')">&larr; network</div>
-        <div class="brand" style="margin-top:10px; font-size:19px;">Find Friends</div>
-        <div class="sub">search by name or phone number</div>
-      </div>
-    </div>
-    <div class="content">
-      <input class="field-input" type="text" id="findInput" placeholder="e.g. Theo Marsh or (628) 555-0110" oninput="renderDirectoryResults()">
-      <div style="margin-top:16px;" id="findResults"></div>
     </div>
   </div>
 
@@ -855,7 +850,7 @@
       </div>
       <div class="topbar">
         <div class="back-row" onclick="showScreen('screen-network')">&larr; network</div>
-        <div class="brand" style="margin-top:10px; font-size:19px;">Mutual Connections</div>
+        <div class="brand" style="margin-top:10px; font-size:19px;">Connections</div>
         <div class="sub" id="allConnectionsSub">everyone you're connected to</div>
       </div>
     </div>
@@ -864,80 +859,6 @@
     </div>
   </div>
 
-  <!-- ===================== SCREEN: MESSAGES LIST ===================== -->
-  <div class="screen" id="screen-messages">
-    <div class="header-block">
-      <div class="statusbar">
-        <span>9:41</span>
-        <div class="signal">
-          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
-          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
-        </div>
-      </div>
-      <div class="topbar">
-        <div class="brand"><svg class="clef-icon" viewBox="0 0 28 44" width="15" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 4 C10 4 7 10 11 15 C15 20 21 17 20 11 C19 7 14 7 14 11 C14 14 17 15 18 13"/><path d="M18 13 C16 20 15 28 15 35"/><path d="M15 35 C15 41 9 42 7 37 C5 33 10 30 13 33"/></svg>Op<span class="mark">u</span>s</div>
-        <div class="sub">messages</div>
-      </div>
-    </div>
-    <div class="content" style="padding-top:6px;">
-      <div class="thread-item" onclick="showScreen('screen-messages-thread')">
-        <div class="avatar" style="background:var(--sage); margin-left:0; width:40px; height:40px; font-size:13px;">EP</div>
-        <div class="info">
-          <div class="top"><b>Elena Petrova</b><span class="time">2m</span></div>
-          <p>Perfect, see you at 4:30 for load-in!</p>
-        </div>
-        <div class="dot"></div>
-      </div>
-      <div class="thread-item">
-        <div class="avatar" style="background:var(--ink-3); margin-left:0; width:40px; height:40px; font-size:13px;">SC</div>
-        <div class="info">
-          <div class="top"><b>Spencer Cha</b><span class="time">1h</span></div>
-          <p>You: Sounds good — I'll bring the Grieg Sonata No. 3 parts.</p>
-        </div>
-      </div>
-      <div class="thread-item">
-        <div class="avatar" style="background:var(--crimson); margin-left:0; width:40px; height:40px; font-size:13px;">MO</div>
-        <div class="info">
-          <div class="top"><b>Prof. Miriam Osei</b><span class="time">1d</span></div>
-          <p>Just recommended you to a colleague for a chamber series.</p>
-        </div>
-      </div>
-      <div class="thread-item">
-        <div class="avatar" style="background:var(--brass); margin-left:0; width:40px; height:40px; font-size:13px;">FC</div>
-        <div class="info">
-          <div class="top"><b>First Congregational</b><span class="time">3d</span></div>
-          <p>Marked you as paid for Jul 21 service — $120.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== SCREEN: MESSAGE THREAD ===================== -->
-  <div class="screen" id="screen-messages-thread">
-    <div class="header-block">
-      <div class="statusbar">
-        <span>9:41</span>
-        <div class="signal">
-          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
-          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
-        </div>
-      </div>
-      <div class="topbar">
-        <div class="back-row" onclick="showScreen('screen-messages')">&larr; messages</div>
-        <div class="brand" style="margin-top:10px; font-size:19px;">Elena Petrova</div>
-        <div class="sub">Filoli Gardens wedding &middot; Aug 15</div>
-      </div>
-    </div>
-    <div class="content" style="display:flex; flex-direction:column;">
-      <div class="bubble system">Application sent &middot; Mezza Quartet</div>
-      <div class="bubble them">Hi! Loved your quartet's recording of the Pachelbel — would you be free for our 5pm ceremony?</div>
-      <div class="bubble me">Yes, we're available. We can also cover cocktail hour standards if useful.</div>
-      <div class="bubble them">That would be wonderful. Budget is $450/musician, load-in at Gate B.</div>
-      <div class="bubble system">Elena marked you as Hired ✓</div>
-      <div class="bubble them">Perfect, see you at 4:30 for load-in!</div>
-      <div class="bubble system">Payment status: Pending → will update after performance</div>
-    </div>
-  </div>
 
   <!-- ===================== SCREEN: PROFILE ===================== -->
   <div class="screen" id="screen-profile">
@@ -1525,10 +1446,7 @@
       <div class="section-title">Reviews</div>
       <div id="musicianReviews-josh"></div>
 
-      <div class="btn-row" style="margin-top:8px;">
-        <button class="btn">Message</button>
-        <button class="btn ghost" onclick="openSheet()">Share profile</button>
-      </div>
+      <button class="btn block" style="margin-top:8px;" onclick="openSheet()">Share profile</button>
       <button class="btn ghost block" style="margin-top:10px;" onclick="openRecommend({musicianId:'josh', name:'Josh Lee'})">Write a recommendation</button>
     </div>
   </div>
@@ -1575,10 +1493,7 @@
       <div class="section-title">Reviews</div>
       <div id="musicianReviews-nathan"></div>
 
-      <div class="btn-row" style="margin-top:8px;">
-        <button class="btn">Message</button>
-        <button class="btn ghost" onclick="openSheet()">Share profile</button>
-      </div>
+      <button class="btn block" style="margin-top:8px;" onclick="openSheet()">Share profile</button>
       <button class="btn ghost block" style="margin-top:10px;" onclick="openRecommend({musicianId:'nathan', name:'Nathan Gaynor'})">Write a recommendation</button>
     </div>
   </div>
@@ -1625,10 +1540,7 @@
       <div class="section-title">Reviews</div>
       <div id="musicianReviews-elly"></div>
 
-      <div class="btn-row" style="margin-top:8px;">
-        <button class="btn">Message</button>
-        <button class="btn ghost" onclick="openSheet()">Share profile</button>
-      </div>
+      <button class="btn block" style="margin-top:8px;" onclick="openSheet()">Share profile</button>
       <button class="btn ghost block" style="margin-top:10px;" onclick="openRecommend({musicianId:'elly', name:'Elly Schade'})">Write a recommendation</button>
     </div>
   </div>
@@ -1675,10 +1587,7 @@
       <div class="section-title">Reviews</div>
       <div id="musicianReviews-spencer"></div>
 
-      <div class="btn-row" style="margin-top:8px;">
-        <button class="btn">Message</button>
-        <button class="btn ghost" onclick="openSheet()">Share profile</button>
-      </div>
+      <button class="btn block" style="margin-top:8px;" onclick="openSheet()">Share profile</button>
       <button class="btn ghost block" style="margin-top:10px;" onclick="openRecommend({musicianId:'spencer', name:'Spencer Cha'})">Write a recommendation</button>
     </div>
   </div>
@@ -1731,11 +1640,7 @@
     </div>
     <div class="navitem" onclick="setNav(this,'screen-network')">
       <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="12" cy="18" r="2.4"/><line x1="7.8" y1="7.4" x2="10.6" y2="16"/><line x1="16.2" y1="7.4" x2="13.4" y2="16"/></svg></div>
-      Network
-    </div>
-    <div class="navitem" onclick="setNav(this,'screen-messages')">
-      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-      Messages
+      My Network
     </div>
     <div class="navitem" id="navProfileItem" onclick="setNav(this,'screen-profile')">
       <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
@@ -1786,6 +1691,14 @@
   }
   function closeSheet(e){
     document.getElementById('shareSheet').classList.remove('open');
+  }
+
+  function applyToGig(){
+    showAlert({
+      title:'Application sent',
+      message:'Elena Petrova will review your application and reach out with next steps.',
+      confirmText:'Nice', singleButton:true
+    });
   }
 
   /* =====================================================================
@@ -3086,21 +2999,18 @@
     openRecommend({ musicianId:c.id, name:c.name });
   }
 
-  function openFindFriends(){
-    document.getElementById('findInput').value = '';
-    renderDirectoryResults();
-    showScreen('screen-findfriends');
-  }
-
-  function renderDirectoryResults(){
-    var raw = document.getElementById('findInput').value.trim();
+  function renderNetworkSearch(){
+    var raw = document.getElementById('networkSearch').value.trim();
     var q = raw.toLowerCase();
     var qDigits = raw.replace(/\D/g, '');
-    var wrap = document.getElementById('findResults');
+    var wrap = document.getElementById('networkSearchResults');
+    var mainSections = document.getElementById('networkMainSections');
     if(!q){
-      wrap.innerHTML = '<div class="empty-note">Search by name or phone number to find musicians to connect with.</div>';
+      wrap.innerHTML = '';
+      mainSections.style.display = '';
       return;
     }
+    mainSections.style.display = 'none';
     var matches = DIRECTORY.map(function(person, idx){ return { person:person, idx:idx }; }).filter(function(entry){
       var person = entry.person;
       var nameMatch = person.name.toLowerCase().indexOf(q) > -1;
@@ -3129,7 +3039,7 @@
     var person = DIRECTORY[idx];
     showAlert({
       title:'Add '+person.name+' to your network?',
-      message:person.name+' will be added to your mutual connections. You\'ll be able to message and write recommendations for each other.',
+      message:person.name+' will be added to your connections. You\'ll be able to write recommendations for each other.',
       confirmText:'Confirm', cancelText:'Deny',
       onConfirm:function(){ addToNetwork(person); }
     });
@@ -3140,7 +3050,7 @@
     renderMutualPreview();
     renderMutualCount();
     renderAllConnections();
-    renderDirectoryResults();
+    renderNetworkSearch();
     showAlert({ title:'Connected', message:person.name+' is now part of your network.', confirmText:'Nice', singleButton:true });
   }
 

@@ -41,8 +41,9 @@ No install required — it's a single static file.
 - **Discover** — a searchable feed of live opportunities (a search bar sits above the cards
   and filters by event name, gig type, or location in real time) with mutual-connection trust
   signals. The header matches every other tab's header size (a "discover · organize" subtitle,
-  same as "your network" on the Network tab), with a small "+" button in the top-right corner
-  that opens the Organize Event form.
+  same as "my network" on the My Network tab), with a small "+" button in the top-right corner
+  that opens the Organize Event form. Tapping "Apply" on a gig posts an application straight
+  away (no messaging step) and confirms with a native-style alert.
 - **Organize Event** — opens as a full-screen popup modal over whatever screen you're on
   (the "+" button on Discover, or a dedicated pill button at the top of the Profile screen) —
   it slides up like a native sheet rather than navigating you to a new page, and can be
@@ -51,12 +52,18 @@ No install required — it's a single static file.
   service, fundraiser, private party, other), desired musicians/instruments (multi-select), and
   compensation expectations. Posting adds it to your profile's Events Organized section.
 - **Gig Detail** — full posting info, "why this feels safe" network context, and an apply flow.
-- **Network** — your ensembles (Mezza Quartet, Grieg Duo — both tap through to full
-  ensemble profiles with member rosters), mutual connections, and recommendations.
+- **My Network** — a search bar up top lets you look up anyone by name or phone number
+  against a small mock directory (typing hides the two sections below and shows live results;
+  "Add" on a result shows a native-style confirm/deny alert before adding them). Below the
+  search bar, a **Connections** section lists your closest connections with a clickable
+  "X total" label that opens a full scrolling list of everyone in your network. Below that,
+  an **Ensembles** section shows the ensembles you're a part of (Mezza Quartet, Grieg Duo —
+  both tap through to full ensemble profiles with member rosters), with its own
+  "+ Create/Join" link.
 - **Ensemble profiles** — bio, availability, media, and a clickable member list; each seeded
   member has their own bio page with a back arrow to the ensemble.
 - **Create/Join Ensemble** — a "+ Create/Join" link on the Ensembles section (on both the
-  Network screen and the Profile screen) opens a full-screen popup with two tabs. **Create
+  My Network screen and the Profile screen) opens a full-screen popup with two tabs. **Create
   New** builds a brand-new ensemble from a name, type (string quartet, duo, band, choir,
   etc.), genres, and a bio — you're added as its first member, no approval needed since you're
   the founder. **Join Existing** searches a small mock directory of other Pittsburgh-area
@@ -67,11 +74,9 @@ No install required — it's a single static file.
   once every member has confirmed; if even one member declines, the request is denied outright
   (regardless of how many already said yes) and you're notified who declined — the pill resets
   and you're free to try again. Either way, once you're in, the ensemble immediately shows up
-  on both the Profile and Network screens and gets its own detail page (bio, media, member
+  on both the Profile and My Network screens and gets its own detail page (bio, media, member
   list) — the two seeded ensembles (Mezza Quartet, Grieg Duo) keep their existing dedicated
   pages, while every created/joined ensemble shares one data-driven detail screen.
-- **Messages** — a thread list and one live conversation thread with system status messages
-  (applied, hired, payment pending).
 - **Profile** — your own bio, genres, an editable "Available For" chip list (weddings,
   funerals, corporate events, etc. — click to toggle, "+ More" reveals additional options),
   media (with a "+ Add" button to add a new recording/reel with a caption), linked ensembles,
@@ -95,45 +100,57 @@ No install required — it's a single static file.
   active profile's current data) covering name, instrument(s) or event-organizer status,
   experience, location, credential, genres, availability, rate, bio, and photo. Saving
   re-renders the profile from the same `profiles` data model the wizard writes to.
-- **Find Friends** — a "+ Find" button in the Network screen's header opens a search screen
-  where you can look someone up by name or phone number against a small mock directory.
-  Tapping "Add" on a result shows a native-style confirm/deny alert ("Add so-and-so to your
-  network?"); confirming adds them to your mutual connections on the spot.
-- **Mutual connections, expanded** — the "X total" label next to Mutual Connections on the
-  Network screen is clickable and takes you to a full scrolling list of everyone in your
-  network (seeded with the four ensemble co-members plus sixteen additional mock
-  connections, growing as you add people via Find Friends).
-- **Write a recommendation** — every connection row (in the Network screen's preview list,
+- **Connections, expanded** — the "X total" label next to Connections on the My Network
+  screen is clickable and takes you to a full scrolling list of everyone in your network
+  (seeded with the four ensemble co-members plus sixteen additional mock connections, growing
+  as you add people via the search bar at the top of My Network).
+- **Write a recommendation** — every connection row (in the My Network screen's preview list,
   the full connections list, and on each of the four ensemble members' own bio pages) has a
   small pencil-icon button that opens a recommendation composer. Posting a recommendation for
   Josh, Nathan, Elly, or Spencer appends it to a live Reviews section on their bio page,
-  replacing the empty "No reviews yet" state.
+  replacing the empty "No reviews yet" state. Each musician's bio page has a single "Share
+  profile" button (no messaging).
 
 Navigation keeps a lightweight history stack (`navHistory` in the `<script>` at the bottom
 of `index.html`), so back arrows always return to wherever you actually came from, even
 across ensemble → member → back chains. The Profile screen itself is now data-driven — it's
 rendered from a `profiles` array via `renderActiveProfile()`, so any profile (seeded,
 wizard-created, or edited) reuses the exact same layout and empty states. Network data lives
-in a similar `CONNECTIONS` / `DIRECTORY` pair of arrays, and a generic `showAlert()` modal
-(styled like a native iOS alert) is reused for every confirm/deny and delete-confirmation
-moment in the app. The Discover feed is likewise data-driven from a `GIGS` array rendered
-by `renderDiscoverFeed()`, filtered live against the search bar; each profile carries its
-own `eventsOrganized` array (fed by the Organize Event form) rendered on the Profile screen
-and on the standalone Events Organized list/detail screens. Ensembles follow the same
-pattern: each profile's `ensembles` array feeds both the Network screen's cards
+in a similar `CONNECTIONS` / `DIRECTORY` pair of arrays, feeding an inline search
+(`renderNetworkSearch()`) that swaps the My Network screen between its normal Connections/
+Ensembles view and live search results as you type. A generic `showAlert()` modal (styled
+like a native iOS alert) is reused for every confirm/deny and delete-confirmation moment in
+the app. The Discover feed is likewise data-driven from a `GIGS` array rendered by
+`renderDiscoverFeed()`, filtered live against the search bar; each profile carries its own
+`eventsOrganized` array (fed by the Organize Event form) rendered on the Profile screen and
+on the standalone Events Organized list/detail screens. Ensembles follow the same pattern:
+each profile's `ensembles` array feeds both the My Network screen's cards
 (`renderNetworkEnsembles()`) and the Profile screen's list, a shared `ensembleCardHtml()`
 renders the card markup either place, and every created/joined ensemble (as opposed to the
 two seeded ones) opens the generic `screen-ensemble-detail` populated by
 `renderEnsembleDetail()`.
 
+## Mobile scaling
+
+On a real phone (any viewport 520px wide or narrower), the app drops the decorative "phone
+mockup in a frame" chrome entirely — no border, corner radius, drop shadow, or the 80% scale
+transform — and stretches `.phone` to fill the full viewport (`100vw` / `100dvh`), so opening
+the deployed `index.html` on your phone feels like a real installed app rather than a small
+mockup floating on a dark background. The status bar and bottom nav bar pad themselves out
+using `env(safe-area-inset-top/bottom)` so they sit correctly around a device's notch and
+home indicator (this requires the `viewport-fit=cover` viewport meta tag, which is already
+set). On desktop/tablet widths, the original framed 80%-scale mockup presentation is
+unchanged.
+
 ## A note on `index.html` vs `opus-prototype.html`
 
 `index.html` is the standalone build meant for deploying on its own (e.g. GitHub Pages) —
-it's rendered at 80% scale (`transform:scale(0.8)` on `.phone`) so the phone frame doesn't
-dominate a full browser tab. `opus-prototype.html` is the same app at 100% scale, sized for
-embedding in an `<iframe>` inside the portfolio case study page. Keep both in sync when you
-make changes — the only intentional differences are the `<title>`, the studio label text,
-and that one `transform` rule.
+on desktop/tablet widths it's rendered at 80% scale (`transform:scale(0.8)` on `.phone`) so
+the phone frame doesn't dominate a full browser tab (see "Mobile scaling" above for what
+happens on an actual phone). `opus-prototype.html` is the same app always at 100% scale
+(no mobile/desktop distinction), sized for embedding in an `<iframe>` inside the portfolio
+case study page. Keep both in sync when you make changes — the only intentional differences
+are the `<title>`, the studio label text, and that one `transform` rule.
 
 ## Where this could go next
 
