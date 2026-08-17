@@ -587,6 +587,60 @@
       padding-bottom:calc(26px + env(safe-area-inset-bottom, 0px));
     }
   }
+
+  /* ===== Profile: Contact Info button + popover card ===== */
+  .contact-info-btn{
+    position:absolute; top:16px; left:18px; display:flex; align-items:center; gap:5px;
+    font-family:'JetBrains Mono',monospace; font-size:10px; padding:8px 11px; border-radius:20px;
+    background:rgba(247,243,234,.12); color:var(--text-light); border:1px solid rgba(247,243,234,.22); cursor:pointer;
+    white-space:nowrap; z-index:5;
+  }
+  .contact-info-card{
+    display:none; position:absolute; top:52px; left:18px; background:#fff; color:var(--text-dark);
+    border-radius:14px; padding:6px 14px; box-shadow:0 14px 32px rgba(0,0,0,.3); z-index:20; min-width:200px;
+  }
+  .contact-info-card.open{ display:block; }
+  .contact-row{ display:flex; flex-direction:column; gap:1px; padding:9px 0; }
+  .contact-row + .contact-row{ border-top:1px solid var(--line); }
+  .contact-row .contact-label{
+    color:var(--text-muted); font-family:'JetBrains Mono',monospace; font-size:9.5px;
+    text-transform:uppercase; letter-spacing:.06em;
+  }
+  .contact-row .contact-val{ font-size:13px; color:var(--ink); font-family:'Inter',sans-serif; margin-top:2px; }
+
+  /* ===== Discover: search row + filter button ===== */
+  .discover-search-row{ display:flex; gap:8px; padding:14px 18px 0; flex-shrink:0; align-items:center; }
+  .discover-search-row .field-input{ flex:1; margin-bottom:0; }
+  .filter-icon-btn{
+    flex-shrink:0; width:46px; height:46px; border-radius:12px;
+    background:var(--ink); border:1px solid var(--ink); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; color:var(--brass-light); position:relative;
+  }
+  .filter-icon-btn.has-filters::after{
+    content:''; position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%;
+    background:var(--crimson); border:1.5px solid #fff;
+  }
+
+  /* ===== Events tab ===== */
+  .events-create-row{
+    display:flex; align-items:center; gap:12px; padding:13px; margin:14px 18px 4px; cursor:pointer;
+    border:1.5px dashed var(--brass); border-radius:14px; background:rgba(192,138,62,.06);
+  }
+  .events-create-row .plus-circle{
+    width:38px; height:38px; border-radius:50%; background:var(--ink); color:var(--brass-light);
+    display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;
+  }
+  .events-create-row b{ display:block; font-size:13px; color:var(--ink); font-family:'Inter',sans-serif; }
+  .events-create-row span{ font-size:11px; color:var(--text-muted); }
+  .status-pill{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; padding:4px 9px; border-radius:20px; flex-shrink:0;
+    background:rgba(76,122,111,.14); color:var(--sage); border:1px solid rgba(76,122,111,.35); white-space:nowrap;
+  }
+  .past-event-row{ padding:12px 0; border-bottom:1px solid var(--line); }
+  .past-event-row:last-child{ border-bottom:none; }
+  .attendee-strip{ display:flex; gap:5px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+  .attendee-strip .avatar{ margin-left:0; width:26px; height:26px; font-size:9px; }
+  .attendee-names{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--text-muted); margin-left:2px; }
 </style>
 </head>
 <body>
@@ -606,23 +660,55 @@
         </div>
       </div>
       <div class="topbar">
-        <button class="discover-plus-btn" onclick="openOrganizeModal()" aria-label="Organize an event">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
         <div class="brand"><svg class="clef-icon" viewBox="0 0 28 44" width="15" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 4 C10 4 7 10 11 15 C15 20 21 17 20 11 C19 7 14 7 14 11 C14 14 17 15 18 13"/><path d="M18 13 C16 20 15 28 15 35"/><path d="M15 35 C15 41 9 42 7 37 C5 33 10 30 13 33"/></svg>Op<span class="mark">u</span>s</div>
-        <div class="sub">discover &middot; organize</div>
+        <div class="sub">discover</div>
       </div>
     </div>
+    <div class="discover-search-row">
+      <input class="field-input" type="text" id="discoverSearch" placeholder="Search events, gig types, locations..." oninput="renderDiscoverFeed()">
+      <button class="filter-icon-btn" id="discoverFilterBtn" onclick="openDiscoverFilterModal()" aria-label="Filter opportunities">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="1.8" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.8" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="1.8" fill="currentColor" stroke="none"/></svg>
+      </button>
+    </div>
     <div class="chiprow">
-      <div class="chip">All instruments</div>
-      <div class="chip on">Violin</div>
-      <div class="chip">Chamber</div>
-      <div class="chip">This month</div>
-      <div class="chip">$300+</div>
+      <div class="chip on" id="scopeChipNetwork" onclick="setDiscoverScope('network')">In-Network</div>
+      <div class="chip" id="scopeChipPublic" onclick="setDiscoverScope('public')">Public</div>
     </div>
     <div class="content">
-      <input class="field-input" type="text" id="discoverSearch" placeholder="Search events, gig types, locations..." oninput="renderDiscoverFeed()" style="margin-bottom:14px;">
       <div id="discoverFeed"></div>
+    </div>
+  </div>
+
+  <!-- ===================== DISCOVER FILTERS — full-screen popup modal ===================== -->
+  <div class="modal-overlay" id="discoverFilterModal" onclick="closeDiscoverFilterModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="header-block">
+        <div class="statusbar">
+          <span>9:41</span>
+          <div class="signal">
+            <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+            <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+          </div>
+        </div>
+        <div class="topbar">
+          <button class="modal-close" onclick="closeDiscoverFilterModal()" aria-label="Close">&#10005;</button>
+          <div class="brand" style="margin-top:10px; font-size:19px;">Filter Opportunities</div>
+        </div>
+      </div>
+      <div class="content wiz-content">
+        <div class="field-label" style="margin-top:6px;">Instruments</div>
+        <div class="chip-select" id="filterInstrumentGrid"></div>
+
+        <div class="field-label">Number of players</div>
+        <div class="chip-select" id="filterPlayersGrid"></div>
+
+        <div class="field-label">Location</div>
+        <input class="field-input" type="text" id="filterLocation" placeholder="e.g. Pittsburgh, PA">
+      </div>
+      <div class="wiz-footer" style="display:flex; gap:10px;">
+        <button class="btn ghost" style="flex:1;" onclick="clearDiscoverFilters()">Clear</button>
+        <button class="btn" style="flex:2;" onclick="applyDiscoverFilters()">Apply Filters</button>
+      </div>
     </div>
   </div>
 
@@ -660,6 +746,9 @@
 
         <div class="field-label">Compensation expectations</div>
         <input class="field-input" type="text" id="orgCompensation" placeholder="e.g. $450/musician or $1,200 flat">
+
+        <div class="field-label">Notes</div>
+        <textarea class="field-textarea" id="orgNotes" maxlength="400" placeholder="Anything else musicians should know — parking, dress code, repertoire requests..."></textarea>
       </div>
       <div class="wiz-footer">
         <button class="btn block" onclick="submitOrganizeEvent()">Post Event</button>
@@ -873,6 +962,14 @@
       <div id="profileSwitcher" class="profile-switcher" style="display:none; padding-bottom:14px;"></div>
     </div>
     <div class="profile-hero" style="margin-top:-1px;">
+      <button class="contact-info-btn" onclick="toggleContactInfo(event)" aria-label="Contact information">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        Contact
+      </button>
+      <div class="contact-info-card" id="contactInfoCard">
+        <div class="contact-row"><div class="contact-label">Email</div><div class="contact-val" id="contactEmailVal">—</div></div>
+        <div class="contact-row"><div class="contact-label">Phone</div><div class="contact-val" id="contactPhoneVal">—</div></div>
+      </div>
       <button class="organize-event-btn" onclick="openOrganizeModal()" aria-label="Organize an event">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
         Organize Event
@@ -1223,6 +1320,58 @@
     </div>
     <div class="wiz-footer">
       <button class="btn block" onclick="submitAddMedia()">Add Media</button>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: EVENTS TAB ===================== -->
+  <div class="screen" id="screen-events">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="brand"><svg class="clef-icon" viewBox="0 0 28 44" width="15" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 4 C10 4 7 10 11 15 C15 20 21 17 20 11 C19 7 14 7 14 11 C14 14 17 15 18 13"/><path d="M18 13 C16 20 15 28 15 35"/><path d="M15 35 C15 41 9 42 7 37 C5 33 10 30 13 33"/></svg>Op<span class="mark">u</span>s</div>
+        <div class="sub">your events</div>
+      </div>
+    </div>
+    <div class="events-create-row" onclick="openOrganizeModal()">
+      <div class="plus-circle">+</div>
+      <div>
+        <b>Organize an Event</b>
+        <span>Post a gig and find musicians to fill it</span>
+      </div>
+    </div>
+    <div class="content">
+      <div class="section-title">Events You're Organizing<span class="see clickable" id="pastEventsCount" onclick="openPastEvents()">0 past</span></div>
+      <div id="upcomingEventsList"></div>
+
+      <div class="section-title" style="margin-top:22px;">My Events</div>
+      <div id="myEventsBookedList"></div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: PAST EVENTS ===================== -->
+  <div class="screen" id="screen-pastevents">
+    <div class="header-block">
+      <div class="statusbar">
+        <span>9:41</span>
+        <div class="signal">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="6" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="currentColor"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" fill="none"/><rect x="2" y="2" width="17" height="7" rx="1.2" fill="currentColor"/><rect x="21.5" y="3.5" width="1.5" height="4" rx="0.7" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="back-row" onclick="showScreen('screen-events')">&larr; events</div>
+        <div class="brand" style="margin-top:10px; font-size:19px;">Past Events</div>
+        <div class="sub">who performed</div>
+      </div>
+    </div>
+    <div class="content">
+      <div id="pastEventsList"></div>
     </div>
   </div>
 
@@ -1638,6 +1787,10 @@
       <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
       Discover
     </div>
+    <div class="navitem" id="navEventsItem" onclick="setNav(this,'screen-events')">
+      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/></svg></div>
+      Events
+    </div>
     <div class="navitem" onclick="setNav(this,'screen-network')">
       <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="12" cy="18" r="2.4"/><line x1="7.8" y1="7.4" x2="10.6" y2="16"/><line x1="16.2" y1="7.4" x2="13.4" y2="16"/></svg></div>
       My Network
@@ -1708,6 +1861,7 @@
      same layout/empty-states as the seeded Cassandra May profile.
   ===================================================================== */
   var accountPhone = '(412) 555-0182';
+  var accountEmail = 'cassandra.may@opusmusic.app';
 
   var profiles = [
     {
@@ -1761,10 +1915,19 @@
         { text:'"Eighteen years of stage experience and it shows — poised, precise, and generous with the rest of the ensemble."', who:'— Prof. Miriam Osei, Carnegie Mellon School of Music' }
       ],
       eventsOrganized: [
-        { title:'CMU Alumni Chamber Night', location:'Kresge Recital Hall, Pittsburgh PA', when:'Sat, Oct 3 · 7:00–9:00 PM', gigType:'Recital', desiredMusicians:['Violin','Viola','Cello'], compensation:'$200/musician' }
+        { title:'Fall Fundraiser Strings', location:'The Frick Pittsburgh, Pittsburgh PA', when:'Sat, Sep 12 · 6:00–8:00 PM', gigType:'Fundraiser', desiredMusicians:['Violin','Cello'], compensation:'$300/musician', status:'upcoming', notes:'Cocktail-hour background music, string duo or trio preferred.' },
+        { title:'CMU Alumni Chamber Night', location:'Kresge Recital Hall, Pittsburgh PA', when:'Sat, Oct 3 · 7:00–9:00 PM', gigType:'Recital', desiredMusicians:['Violin','Viola','Cello'], compensation:'$200/musician', status:'past', notes:'', attendees:[
+          { name:'Josh Lee', initials:'JL', color:'var(--sage)' },
+          { name:'Nathan Gaynor', initials:'NG', color:'var(--crimson)' },
+          { name:'Elly Schade', initials:'ES', color:'var(--ink-3)' }
+        ] }
+      ],
+      bookedGigs: [
+        { title:'String Quartet, Sat Aug 15', location:'Filoli Gardens, Woodside CA', when:'Sat, Aug 15 · 4:00–6:30 PM', role:'Violin', organizer:'Elena Petrova' }
       ],
       isNew: false,
-      phone: accountPhone
+      phone: accountPhone,
+      email: accountEmail
     }
   ];
   var currentProfileIndex = 0;
@@ -1807,6 +1970,7 @@
     currentProfileIndex = i;
     renderActiveProfile();
     renderNetworkEnsembles();
+    renderEventsScreen();
     showScreen('screen-profile');
   }
 
@@ -1905,6 +2069,24 @@
   }
 
   /* =====================================================================
+     CONTACT INFO — small popover on the Profile header
+  ===================================================================== */
+  function toggleContactInfo(e){
+    if(e) e.stopPropagation();
+    var card = document.getElementById('contactInfoCard');
+    var p = profiles[currentProfileIndex];
+    document.getElementById('contactEmailVal').textContent = p.email || accountEmail;
+    document.getElementById('contactPhoneVal').textContent = p.phone || accountPhone;
+    card.classList.toggle('open');
+  }
+  document.addEventListener('click', function(e){
+    var card = document.getElementById('contactInfoCard');
+    if(card && card.classList.contains('open') && !e.target.closest('.contact-info-btn') && !e.target.closest('.contact-info-card')){
+      card.classList.remove('open');
+    }
+  });
+
+  /* =====================================================================
      DISCOVER FEED — searchable gig / opportunity cards
   ===================================================================== */
   var GIGS = [
@@ -1913,22 +2095,26 @@
       meta:'Filoli Gardens, Woodside CA · 2.5 hrs', tags:['Wedding','Classical','Formal'],
       mutuals:[{initials:'NG',color:'var(--sage)'},{initials:'JL',color:'var(--brass)'}],
       mutualLabel:'2 mutual connections applying', rate:'$450/musician',
-      clickable:true, onclick:"showScreen('screen-gigdetail')"
+      clickable:true, onclick:"showScreen('screen-gigdetail')",
+      scope:'network', instruments:['Violin','Viola','Cello'], numPlayers:4, location:'Woodside, CA'
     },
     {
       id:'gig2', eyebrow:'Religious Service · Sunday', title:'Sunday Service Cellist',
       meta:'First Congregational Church, Pittsburgh PA', tags:['Religious Service','Classical'],
-      mutuals:[], mutualLabel:'', rate:'$120/service'
+      mutuals:[], mutualLabel:'', rate:'$120/service',
+      scope:'public', instruments:['Cello'], numPlayers:1, location:'Pittsburgh, PA'
     },
     {
       id:'gig3', eyebrow:'Recital · Next Week', title:'Violin & Piano Recital Set',
       meta:'The Athenaeum, Pittsburgh PA', tags:['Recital','Classical'],
-      mutuals:[], mutualLabel:'', rate:'$350 flat'
+      mutuals:[], mutualLabel:'', rate:'$350 flat',
+      scope:'public', instruments:['Violin','Piano'], numPlayers:2, location:'Pittsburgh, PA'
     },
     {
       id:'gig4', eyebrow:'Session Work · Trusted by your network', title:'Contemporary Ensemble Reading',
       meta:'Community Music Center, San Francisco CA', tags:['Session Work','Contemporary'],
-      mutuals:[{initials:'ES',color:'var(--ink-3)'}], mutualLabel:'Elly Suzuki recommends', rate:'$275'
+      mutuals:[{initials:'ES',color:'var(--ink-3)'}], mutualLabel:'Elly Suzuki recommends', rate:'$275',
+      scope:'network', instruments:['Violin','Viola','Cello','Bass'], numPlayers:5, location:'San Francisco, CA'
     }
   ];
 
@@ -1950,9 +2136,29 @@
       + '</div>';
   }
 
+  var discoverScope = 'network';
+  var discoverFilters = { instruments:[], players:[], location:'' };
+
+  function setDiscoverScope(scope){
+    discoverScope = scope;
+    document.getElementById('scopeChipNetwork').classList.toggle('on', scope === 'network');
+    document.getElementById('scopeChipPublic').classList.toggle('on', scope === 'public');
+    renderDiscoverFeed();
+  }
+
+  function playerBucket(n){
+    if(n >= 5) return '5+';
+    return String(n);
+  }
+
   function renderDiscoverFeed(){
     var q = (document.getElementById('discoverSearch').value || '').trim().toLowerCase();
-    var results = !q ? GIGS : GIGS.filter(function(g){
+    var results = GIGS.filter(function(g){
+      if(g.scope !== discoverScope) return false;
+      if(discoverFilters.instruments.length && !discoverFilters.instruments.some(function(i){ return g.instruments.indexOf(i) > -1; })) return false;
+      if(discoverFilters.players.length && discoverFilters.players.indexOf(playerBucket(g.numPlayers)) === -1) return false;
+      if(discoverFilters.location && g.location.toLowerCase().indexOf(discoverFilters.location.toLowerCase()) === -1) return false;
+      if(!q) return true;
       var hay = (g.eyebrow+' '+g.title+' '+g.meta+' '+g.tags.join(' ')).toLowerCase();
       return hay.indexOf(q) > -1;
     });
@@ -1960,8 +2166,59 @@
     if(results.length){
       el.innerHTML = results.map(gigCardHtml).join('');
     } else {
-      el.innerHTML = '<div class="empty-note">No opportunities match &ldquo;'+escapeHtml(document.getElementById('discoverSearch').value.trim())+'&rdquo;. Try a different search.</div>';
+      var qVal = document.getElementById('discoverSearch').value.trim();
+      el.innerHTML = qVal
+        ? '<div class="empty-note">No opportunities match &ldquo;'+escapeHtml(qVal)+'&rdquo;. Try a different search.</div>'
+        : '<div class="empty-note">No '+(discoverScope === 'network' ? 'in-network' : 'public')+' opportunities match your filters right now.</div>';
     }
+  }
+
+  /* =====================================================================
+     DISCOVER FILTERS — full-screen popup modal (instruments, players, location)
+  ===================================================================== */
+  var PLAYER_COUNTS = ['1','2','3','4','5+'];
+
+  function toggleFilterMulti(el, arr, val){
+    el.classList.toggle('on');
+    var idx = arr.indexOf(val);
+    if(el.classList.contains('on')){ if(idx === -1) arr.push(val); }
+    else { if(idx > -1) arr.splice(idx, 1); }
+  }
+
+  function buildDiscoverFilterGrids(){
+    document.getElementById('filterInstrumentGrid').innerHTML = INSTRUMENTS.map(function(inst){
+      var on = discoverFilters.instruments.indexOf(inst) > -1;
+      return '<div class="chip-pick'+(on?' on':'')+'" onclick="toggleFilterMulti(this, discoverFilters.instruments, \''+inst+'\')">'+inst+'</div>';
+    }).join('');
+    document.getElementById('filterPlayersGrid').innerHTML = PLAYER_COUNTS.map(function(n){
+      var on = discoverFilters.players.indexOf(n) > -1;
+      return '<div class="chip-pick'+(on?' on':'')+'" onclick="toggleFilterMulti(this, discoverFilters.players, \''+n+'\')">'+n+'</div>';
+    }).join('');
+    document.getElementById('filterLocation').value = discoverFilters.location;
+  }
+
+  function openDiscoverFilterModal(){
+    buildDiscoverFilterGrids();
+    document.getElementById('discoverFilterModal').classList.add('open');
+  }
+
+  function closeDiscoverFilterModal(){
+    document.getElementById('discoverFilterModal').classList.remove('open');
+  }
+
+  function applyDiscoverFilters(){
+    discoverFilters.location = document.getElementById('filterLocation').value.trim();
+    var hasFilters = discoverFilters.instruments.length || discoverFilters.players.length || discoverFilters.location;
+    document.getElementById('discoverFilterBtn').classList.toggle('has-filters', !!hasFilters);
+    closeDiscoverFilterModal();
+    renderDiscoverFeed();
+  }
+
+  function clearDiscoverFilters(){
+    discoverFilters = { instruments:[], players:[], location:'' };
+    document.getElementById('discoverFilterBtn').classList.remove('has-filters');
+    buildDiscoverFilterGrids();
+    renderDiscoverFeed();
   }
 
   /* =====================================================================
@@ -2285,8 +2542,10 @@
       ensembles: [],
       reviews: [],
       eventsOrganized: [],
+      bookedGigs: [],
       isNew: true,
-      phone: accountPhone
+      phone: accountPhone,
+      email: accountEmail
     };
     profiles.push(newProfile);
     currentProfileIndex = profiles.length - 1;
@@ -2445,6 +2704,7 @@
     document.getElementById('orgLocation').value = '';
     document.getElementById('orgWhen').value = '';
     document.getElementById('orgCompensation').value = '';
+    document.getElementById('orgNotes').value = '';
     organizeEventData = { gigType:'', desiredMusicians:[] };
     document.querySelectorAll('#orgTypeGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
     document.querySelectorAll('#orgMusiciansGrid .chip-pick').forEach(function(o){ o.classList.remove('on'); });
@@ -2476,23 +2736,26 @@
       when: document.getElementById('orgWhen').value.trim() || 'Date & time TBD',
       gigType: organizeEventData.gigType || 'Event',
       desiredMusicians: organizeEventData.desiredMusicians.slice(),
-      compensation: document.getElementById('orgCompensation').value.trim() || 'Not specified'
+      compensation: document.getElementById('orgCompensation').value.trim() || 'Not specified',
+      notes: document.getElementById('orgNotes').value.trim(),
+      status: 'upcoming'
     };
     var p = profiles[currentProfileIndex];
     p.eventsOrganized = p.eventsOrganized || [];
     p.eventsOrganized.unshift(event);
     renderActiveProfile();
+    renderEventsScreen();
 
     closeOrganizeModal();
 
     document.querySelectorAll('.navitem').forEach(function(n){ n.classList.remove('active'); });
-    document.getElementById('navProfileItem').classList.add('active');
-    navHistory = ['screen-profile'];
-    showScreen('screen-profile');
+    document.getElementById('navEventsItem').classList.add('active');
+    navHistory = ['screen-events'];
+    showScreen('screen-events');
 
     showAlert({
       title:'Event posted',
-      message:'"'+title+'" has been added to your Events Organized.',
+      message:'"'+title+'" has been added to your events.',
       confirmText:'Done', singleButton:true
     });
   }
@@ -2585,7 +2848,78 @@
       + detailRow('Date & time', ev.when)
       + detailRow('Desired musicians', ev.desiredMusicians && ev.desiredMusicians.length ? ev.desiredMusicians.join(', ') : 'Open to all instruments')
       + detailRow('Compensation', ev.compensation || 'Not specified')
+      + (ev.notes ? detailRow('Notes', ev.notes) : '')
+      + (ev.attendees && ev.attendees.length ? detailRow('Performed by', ev.attendees.map(function(a){ return a.name; }).join(', ')) : '')
       + detailRow('Organized by', p.name);
+  }
+
+  /* =====================================================================
+     EVENTS TAB — organize/upcoming/past + "My Events" (gigs you're booked on)
+  ===================================================================== */
+  function eventRowHtml(ev, idx){
+    return '<div class="list-row" onclick="openEventDetail('+idx+')"><div class="avatar" style="background:var(--ink-3); margin-left:0; width:38px; height:38px; font-size:11px;">'+escapeHtml((ev.gigType||'EV').slice(0,2).toUpperCase())+'</div><div class="info"><b>'+escapeHtml(ev.title)+'</b><span>'+escapeHtml(ev.location)+' &middot; '+escapeHtml(ev.when)+'</span></div><div class="chev">&rsaquo;</div></div>';
+  }
+
+  function bookedGigRowHtml(g){
+    return '<div class="list-row" style="cursor:default;">'
+      + '<div class="avatar" style="background:var(--sage); margin-left:0; width:38px; height:38px; font-size:11px;">'+escapeHtml((g.role||'M').slice(0,2).toUpperCase())+'</div>'
+      + '<div class="info"><b>'+escapeHtml(g.title)+'</b><span>'+escapeHtml(g.location)+' &middot; '+escapeHtml(g.when)+'</span></div>'
+      + '<span class="status-pill">Confirmed</span>'
+      + '</div>';
+  }
+
+  function renderEventsScreen(){
+    var p = profiles[currentProfileIndex];
+    var events = p.eventsOrganized || [];
+    var upcoming = events.map(function(ev, i){ return { ev:ev, idx:i }; }).filter(function(e){ return e.ev.status !== 'past'; });
+    var pastCount = events.filter(function(ev){ return ev.status === 'past'; }).length;
+
+    var el = document.getElementById('upcomingEventsList');
+    if(el){
+      el.innerHTML = upcoming.length
+        ? upcoming.map(function(e){ return eventRowHtml(e.ev, e.idx); }).join('')
+        : '<div class="empty-note">No upcoming events yet. Tap &ldquo;Organize an Event&rdquo; above to post one.</div>';
+    }
+    var pastLabel = document.getElementById('pastEventsCount');
+    if(pastLabel) pastLabel.textContent = pastCount + ' past';
+
+    var booked = p.bookedGigs || [];
+    var bEl = document.getElementById('myEventsBookedList');
+    if(bEl){
+      bEl.innerHTML = booked.length
+        ? booked.map(bookedGigRowHtml).join('')
+        : '<div class="empty-note">You haven\'t been booked for any gigs yet. Apply to opportunities on Discover to get started.</div>';
+    }
+  }
+
+  function openPastEvents(){
+    renderPastEventsList();
+    showScreen('screen-pastevents');
+  }
+
+  function renderPastEventsList(){
+    var p = profiles[currentProfileIndex];
+    var events = p.eventsOrganized || [];
+    var past = events.map(function(ev, i){ return { ev:ev, idx:i }; }).filter(function(e){ return e.ev.status === 'past'; });
+    var el = document.getElementById('pastEventsList');
+    if(past.length){
+      el.innerHTML = past.map(function(e){
+        var ev = e.ev;
+        var attendees = ev.attendees || [];
+        var attendeesHtml = attendees.length
+          ? '<div class="attendee-strip">'
+            + attendees.map(function(a){ return '<div class="avatar" style="background:'+a.color+'" title="'+escapeHtml(a.name)+'">'+escapeHtml(a.initials)+'</div>'; }).join('')
+            + '<span class="attendee-names">'+escapeHtml(attendees.map(function(a){ return a.name; }).join(', '))+'</span></div>'
+          : '<div class="attendee-names" style="margin-top:6px; display:block;">No performer records for this event.</div>';
+        return '<div class="past-event-row" onclick="openEventDetail('+e.idx+')" style="cursor:pointer;">'
+          + '<b style="display:block; font-size:13.5px; color:var(--ink); font-family:\'Inter\',sans-serif;">'+escapeHtml(ev.title)+'</b>'
+          + '<span style="font-size:11.5px; color:var(--text-muted);">'+escapeHtml(ev.location)+' &middot; '+escapeHtml(ev.when)+'</span>'
+          + attendeesHtml
+          + '</div>';
+      }).join('');
+    } else {
+      el.innerHTML = '<div class="empty-note">No past events yet.</div>';
+    }
   }
 
   /* =====================================================================
@@ -3122,6 +3456,7 @@
   buildEnsembleGrids();
   renderDiscoverFeed();
   renderActiveProfile();
+  renderEventsScreen();
   renderNetworkEnsembles();
   renderMutualPreview();
   renderMutualCount();

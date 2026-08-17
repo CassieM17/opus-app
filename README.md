@@ -38,20 +38,28 @@ No install required — it's a single static file.
 
 ## What's in the prototype right now
 
-- **Discover** — a searchable feed of live opportunities (a search bar sits above the cards
-  and filters by event name, gig type, or location in real time) with mutual-connection trust
-  signals. The header matches every other tab's header size (a "discover · organize" subtitle,
-  same as "my network" on the My Network tab), with a small "+" button in the top-right corner
-  that opens the Organize Event form. Tapping "Apply" on a gig posts an application straight
-  away (no messaging step) and confirms with a native-style alert.
-- **Organize Event** — opens as a full-screen popup modal over whatever screen you're on
-  (the "+" button on Discover, or a dedicated pill button at the top of the Profile screen) —
-  it slides up like a native sheet rather than navigating you to a new page, and can be
-  dismissed with the X, by tapping outside it, or by posting the event. The form covers title,
-  location, date &amp; time, type of gig (wedding, funeral, corporate event, recital, religious
-  service, fundraiser, private party, other), desired musicians/instruments (multi-select), and
-  compensation expectations. Posting adds it to your profile's Events Organized section.
+- **Discover** — a searchable feed of live opportunities. A search bar sits at the top with a
+  filter button beside it (opens a full-screen popup for narrowing results by instrument,
+  number of players, and location); below that, an **In-Network / Public** toggle switches the
+  whole feed between opportunities surfaced through your connections (with mutual-connection
+  trust signals) and the general public board. Tapping "Apply" on a gig posts an application
+  straight away (no messaging step) and confirms with a native-style alert.
 - **Gig Detail** — full posting info, "why this feels safe" network context, and an apply flow.
+- **Events** — its own tab between Discover and My Network. An "Organize an Event" row at the
+  top opens the Organize Event form. Below it, **Events You're Organizing** lists your upcoming
+  posted events, with a "past" count that's clickable and opens a dedicated Past Events screen
+  showing who performed at each one (avatars and names of the musicians who played). Below
+  that, a **My Events** section lists the gigs you're booked to perform at — opportunities
+  you've applied to and been confirmed for, each shown with a "Confirmed" status pill.
+- **Organize Event** — opens as a full-screen popup modal over whatever screen you're on (the
+  "Organize an Event" row at the top of the Events tab, or a dedicated pill button at the top
+  of the Profile screen) — it slides up like a native sheet rather than navigating you to a new
+  page, and can be dismissed with the X, by tapping outside it, or by posting the event. The
+  form covers title, location, date &amp; time, type of gig (wedding, funeral, corporate event,
+  recital, religious service, fundraiser, private party, other), desired musicians/instruments
+  (multi-select), compensation expectations, and an optional notes box at the bottom for
+  anything else musicians should know. Posting adds it to the Events tab and your profile's
+  Events Organized section, and takes you to the Events tab to see it.
 - **My Network** — a search bar up top lets you look up anyone by name or phone number
   against a small mock directory (typing hides the two sections below and shows live results;
   "Add" on a result shows a native-style confirm/deny alert before adding them). Below the
@@ -77,12 +85,14 @@ No install required — it's a single static file.
   on both the Profile and My Network screens and gets its own detail page (bio, media, member
   list) — the two seeded ensembles (Mezza Quartet, Grieg Duo) keep their existing dedicated
   pages, while every created/joined ensemble shares one data-driven detail screen.
-- **Profile** — your own bio, genres, an editable "Available For" chip list (weddings,
+- **Profile** — a "Contact" pill in the top-left corner of the header opens a small popover
+  card with your email and phone number (tap the pill again or tap anywhere else to close it).
+  Below the header: your own bio, genres, an editable "Available For" chip list (weddings,
   funerals, corporate events, etc. — click to toggle, "+ More" reveals additional options),
   media (with a "+ Add" button to add a new recording/reel with a caption), linked ensembles,
   an **Events Organized** section (tap through to a full list, then into any event's detail
-  view), and reviews. "Share profile" opens a share sheet (Text / Email / Copy Link —
-  currently visual only, no real send).
+  view — this mirrors what's on the Events tab), and reviews. "Share profile" opens a share
+  sheet (Text / Email / Copy Link — currently visual only, no real send).
 - **Settings** — reached via the gear icon on your Profile screen. Lists every profile tied
   to your phone number (with a one-tap switcher and a delete icon on each row — deleting is
   blocked with an explanatory alert if it's your only remaining profile), plus placeholder
@@ -120,14 +130,19 @@ in a similar `CONNECTIONS` / `DIRECTORY` pair of arrays, feeding an inline searc
 (`renderNetworkSearch()`) that swaps the My Network screen between its normal Connections/
 Ensembles view and live search results as you type. A generic `showAlert()` modal (styled
 like a native iOS alert) is reused for every confirm/deny and delete-confirmation moment in
-the app. The Discover feed is likewise data-driven from a `GIGS` array rendered by
-`renderDiscoverFeed()`, filtered live against the search bar; each profile carries its own
-`eventsOrganized` array (fed by the Organize Event form) rendered on the Profile screen and
-on the standalone Events Organized list/detail screens. Ensembles follow the same pattern:
-each profile's `ensembles` array feeds both the My Network screen's cards
-(`renderNetworkEnsembles()`) and the Profile screen's list, a shared `ensembleCardHtml()`
-renders the card markup either place, and every created/joined ensemble (as opposed to the
-two seeded ones) opens the generic `screen-ensemble-detail` populated by
+the app. The Discover feed is likewise data-driven from a `GIGS` array (each entry tagged with
+a `scope` of `network` or `public`, plus `instruments`, `numPlayers`, and `location`) rendered
+by `renderDiscoverFeed()`, filtered live against the search bar, the In-Network/Public toggle
+(`setDiscoverScope()`), and whatever's set in the filter popup (`discoverFilters`, applied via
+`applyDiscoverFilters()`). Each profile carries its own `eventsOrganized` array (fed by the
+Organize Event form, with a `status` of `upcoming` or `past` and an `attendees` list once an
+event is marked past) and a `bookedGigs` array for gigs you're confirmed to perform at —
+together these drive both the Events tab (`renderEventsScreen()`, `renderPastEventsList()`)
+and the Profile screen's Events Organized section, so posting a new event updates both places
+at once. Ensembles follow the same pattern: each profile's `ensembles` array feeds both the
+My Network screen's cards (`renderNetworkEnsembles()`) and the Profile screen's list, a shared
+`ensembleCardHtml()` renders the card markup either place, and every created/joined ensemble
+(as opposed to the two seeded ones) opens the generic `screen-ensemble-detail` populated by
 `renderEnsembleDetail()`.
 
 ## Mobile scaling
