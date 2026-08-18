@@ -1,4 +1,4 @@
-# Opus — A Trusted Marketplace for Live Musicians
+# Opus
 
 An interactive prototype for Opus, a mobile app that helps musicians discover, secure,
 manage, and get paid for live performance opportunities — combining professional profiles,
